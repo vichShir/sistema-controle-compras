@@ -1,0 +1,64 @@
+/**
+ * Folha de estilo do rodapé
+ */
+
+footer{
+  height: auto;
+  background-color: #34495E;
+  color: #FFF;
+  margin-top: 3em;
+
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.15em;
+  line-height: 21px;
+  text-align: center;
+}
+
+/**
+ * Rodapé principal 
+ */
+.ft-topics{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 100px 70px;
+  grid-gap: 10px;
+  text-align: center;
+}
+
+/* About */
+.ft-about{
+  width: 18em;
+  margin: auto;
+}
+
+.ft-about p{
+  text-align: justify;
+}
+
+/* Devs */
+.ft-devs{
+  width: 18em;
+  margin: auto;
+}
+
+.ft-devs ul{
+  list-style-type:none;
+  padding-left: 0;
+}
+
+/**
+ * Rodapé inferior 
+ */
+.ft-info{
+  width: inherit;
+  height: 50px;
+  background-color: #2C3E50;
+  margin: auto;
+  padding: 2px;
+}
+
+.ft-info p{
+  margin-top: 15px;
+}

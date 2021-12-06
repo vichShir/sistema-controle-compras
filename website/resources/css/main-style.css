@@ -1,0 +1,190 @@
+/**
+ * Folha de estilo principal
+ */
+
+body{
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+header{
+	width: 100%;
+	height: 140px;
+	background: #2980B9;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+h1, h2, h3, h4{
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+	font-style: normal;
+	font-weight: normal;
+}
+
+h1{
+	font-size: 3em;
+	line-height: 56px;
+	color: #FFF;
+	margin: 16px 0;
+}
+
+h2{
+	font-size: 2.75em;
+	line-height: 56px;
+	color: #FFF;
+	margin: 0;
+}
+
+h3{
+	line-height: 28px;
+	font-weight: bold;
+	margin-top: 32px;
+	margin-bottom: 0;
+}
+
+hr{
+	width: 300px;
+	margin-top: 0;
+	border: 1px solid #FFF;
+}
+
+a{
+  text-decoration: none;
+  color: #FFF;
+}
+
+p{
+	margin-top: 2px;
+	margin-bottom: 8px;
+}
+
+img{
+	width: 36px;
+	height: 36px;
+}
+
+select{
+  width: 440px;
+  height: 36px;
+  background-color: #2980B9;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  font-family: 'Roboto', sans-serif;
+  color: #FFF;
+ }
+
+.sec-panel{
+	width: 45em;
+	height: auto;
+	background-color: #3498DB;
+	margin: auto;
+	margin-top: 5em;
+	padding: 10px;
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	color: #FFF;
+}
+
+.button{
+	width: 280px;
+	height: 30px;
+	background-color: #e67e22;
+	padding: 14px 20px;
+	margin: 1em 0 1em 0;
+	border: none;
+	border-radius: 10px;
+	display: inline-block;
+
+	font-style: normal;
+	font-weight: bold;
+	font-size: 24px;
+	line-height: 28px;
+	color: #FFF;
+	cursor: pointer;
+}
+
+.side-two{
+	width: auto;
+	height: 36px;
+	margin: auto;
+  	display: flex;
+  	text-align: left;
+}
+
+.side-two p{
+	margin: 8px 0px 8px 4px;
+}
+
+.to-left{
+	text-align: left;
+	margin-left: 0px;
+}
+
+.to-right{
+	text-align: right;
+	margin-right: 0px;
+}
+
+/**
+ * Menu
+ */
+.menu{
+  width: min-content;
+  margin: auto auto 50px auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.125em;
+  line-height: 28px;
+}
+
+.menu a{
+  margin: auto 12px auto 12px;
+}
+
+.menu p{
+  width: max-content;
+  margin-top: 3px;
+  text-align: left;
+}
+
+.menu img{
+  width: 28px;
+  height: 28px;
+  margin-bottom: -6px;
+}
+
+/**
+ * Ranking
+ */
+.sec-rk{
+	width: 21em;
+	margin: 40px auto auto;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 30px 70px;
+	text-align: center;
+
+	font-family: 'Roboto', sans-serif;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 1.5em;
+	line-height: 28px;
+}
+
+.sec-rk div{
+	width: auto;
+	display: flex;
+}
+
+.sec-rk h4{
+	margin-top: 0px;
+}
+
+.rk-line{
+	width: 500px;
+}

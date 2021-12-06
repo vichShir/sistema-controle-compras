@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <title>Cadastrar Nota Fiscal</title>
+    <link href="resources/css/main-style.css" rel="stylesheet" type="text/css"/>
+    <link href="resources/css/form-style.css" rel="stylesheet" type="text/css"/>
+    <link href="resources/css/footer-style.css" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="images/icons/iconweb-bomb.ico"/>
+  </head>
+
+  <body>
+
+    <!-- Cabeçalho -->
+    <header style="height: 90px"><h1>Sistema de Controle de Compras</h1></header>
+
+    <!-- Formulário de Login -->
+    <section class="sec-panel sec-form">
+        <h2>Cadastrar Nota Fiscal</h2>
+        <hr>
+        <form name="formulario-login" action="index.php" method="POST">
+
+            <h3>Pessoa Jurídica</h3>
+            <p class="form-input">Nome Jurídico (*)</p>
+            <input type="text" name="pj_nome" placeholder="Nome" size="60" maxlength="60" required>
+            <p class="form-input">Nome Fantasia</p>
+            <input type="text" name="pj_nomefantasia" placeholder="Nome Fantasia" size="50" maxlength="50">
+            <p class="form-input">CNPJ (*)</p>
+            <input type="text" name="pj_cnpj" placeholder="00000000000000" pattern="[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{5}" size="14" maxlength="14" required>
+            <p class="form-input">Estado (*)</p>
+            <input type="text" name="pj_estado" placeholder="SP" size="2" maxlength="2" required>
+            <p class="form-input">Município (*)</p>
+            <input type="text" name="pj_municipio" placeholder="São Paulo" size="20" maxlength="20" required>
+            <p class="form-input">Bairro (*)</p>
+            <input type="text" name="pj_bairro" placeholder="Centro" size="30" maxlength="30" required>
+            <p class="form-input">Logradouro (*)</p>
+            <input type="text" name="pj_logradouro" placeholder="Av. Paulista, 123" size="40" maxlength="40" required>
+
+            <h3>Nota Fiscal</h3>
+            <p class="form-input">Data (*)</p>
+            <input type="date" name="nf_data" required>
+            <p class="form-input">Desconto (*)</p>
+            <input type="number" name="nf_desconto" placeholder="R$000,00" min="0.00" max="999.999" step="0.01" required>
+            <p class="form-input">Estado (*)</p>
+            <input type="text" name="nf_estado" placeholder="SP" size="2" maxlength="2" required>
+            <p class="form-input">Município (*)</p>
+            <input type="text" name="nf_municipio" placeholder="São Paulo" size="20" maxlength="20" required>
+            <p class="form-input">Bairro (*)</p>
+            <input type="text" name="nf_bairro" placeholder="Centro" size="30" maxlength="30" required>
+            <p class="form-input">Logradouro (*)</p>
+            <input type="text" name="nf_logradouro" placeholder="Av. Paulista, 123" size="40" maxlength="40" required>
+
+            <h3>Item da Nota Fiscal</h3>
+            <p class="form-input">Código (*)</p>
+            <input type="text" name="inf_cod" placeholder="0000000000000000" size="16" maxlength="16" required>
+            <p class="form-input">Unidade (*)</p>
+            <select name="inf_unidade">
+              <option value="unitario">UNITÁRIO</option>
+              <option value="quilograma">KG</option>
+            </select>
+            <p class="form-input">Quantidade (*)</p>
+            <input type="number" name="inf_quantidade" placeholder="000,000" min="0.000" max="999.999" step="0.001" required>
+            <p class="form-input">Desconto (*)</p>
+            <input type="number" name="inf_desconto" placeholder="R$000,00" min="0.00" max="999.999" step="0.01" required>
+            <p class="form-input">Descrição (*)</p>
+            <input type="text" name="inf_descricao" placeholder="Aveia" size="100" maxlength="100" required>
+            <p class="form-input">Valor Unitário (*)</p>
+            <input type="number" name="inf_valorunitario" placeholder="R$00000,00" min="0.00" max="99999.99" step="0.01" required>
+
+            <h3>Fatura</h3>
+            <p class="form-input">Forma de Pagamento (*)</p>
+            <select name="ft_pagamento">
+              <option value="unitario">DÉBITO</option>
+              <option value="quilograma">CRÉDITO</option>
+              <option value="quilograma">À VISTA</option>
+            </select>
+            <p class="form-input">Data de Vencimento (*)</p>
+            <input type="date" name="ft_dtvencimento" required>
+            <p class="form-input">Data de Pagamento</p>
+            <input type="date" name="ft_dtpagamento">
+            <p class="form-input">Valor (*)</p>
+            <input type="number" name="ft_valor" placeholder="R$000000,00" min="0.00" max="999999.99" step="0.01" required>
+
+            <p><input id="form-button" type="submit" value="Cadastrar" ></p>
+        </form>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <!-- Rodapé principal -->
+        <div class="ft-topics">
+            <!-- About -->
+            <section class="ft-about">
+                <h3>SOBRE</h3>
+                <p>Website para preenchimento manual do banco de dados das informações da nota fiscal.</p>
+            </section>
+            <!-- Devs -->
+            <section class="ft-devs">
+                <h3>DESENVOLVEDOR</h3>
+                <ul>
+                    <li>vichShir</li>
+                </ul>
+            </section>
+        </div>
+      
+        <!-- Rodapé inferior -->
+        <div class="ft-info">
+            <p>SCC - Sistema de Controle de Compras - 2021</p>
+        </div>
+    </footer>
+
+  </body>
+</html>
