@@ -1,6 +1,6 @@
 # SCC - Sistema de Controle de Compras 💸
 
-![MSSQL Server](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC2927?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white) 
+![MSSQL Server](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC2927?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white)![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
 ### 📃 Descrição
 
@@ -28,6 +28,9 @@ Estas são apenas algumas indagações iniciais que podemos realizar para o noss
     - Criação das Tabelas
     - Criação de Stored Procedures
     - Criação de Triggers
+- **Website**
+  - Página de Cadastro da Nota Fiscal (index.html)
+
 
 ### 🔨 Projeto
 
@@ -52,7 +55,9 @@ A princípio, os dados coletados serão armazenados em um esquema de **banco de 
 
 Execute os seguintes comandos **(PowerShell)**:
 
-```docker pull mcr.microsoft.com/mssql/server:2019-latest```
+```shell
+docker pull mcr.microsoft.com/mssql/server:2019-latest
+```
 
 ```PowerShell
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourStrong@Passw0rd>" `
@@ -60,29 +65,40 @@ docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<YourStrong@Passw0rd>" `
    -d mcr.microsoft.com/mssql/server:2019-latest
 ```
 
-```docker exec -it scc_sqlserver "bash"```
+```shell
+docker exec -it scc_sqlserver "bash"
+```
 
-```/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "<YourNewStrong@Passw0rd>"```
+```shell
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "<YourStrong@Passw0rd>"
+```
 
 **SQL Commands**
 
 Ver a versão do SQL Server:
 
-``SELECT @@VERSION``
-``GO``
+```sql
+SELECT @@VERSION
+GO
+```
 
 Criar o banco de dados:
 
-```CREATE DATABASE scc```
-
-```GO```
+```sql
+CREATE DATABASE scc
+GO
+```
 
 Ver os banco de dados do SGBD:
 
-```SELECT Name from sys.Databases```
-
-```GO```
+```sql
+SELECT Name from sys.Databases
+GO
+```
 
 Conectar-se de fora do contêiner:
 
-```sqlcmd -S localhost,1433 -U SA -P "<YourNewStrong@Passw0rd>"```
+```shell
+sqlcmd -S localhost,1433 -U SA -P "<YourStrong@Passw0rd>"
+```
+
