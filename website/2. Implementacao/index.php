@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -20,109 +23,134 @@
         <hr>
         
         <form name="formulario" action="index.php" method="POST">
+            <?php
+                require("resources/php/form.php");
 
-        <?php
-            require("resources/php/form.php");
+                $form = new Form();
+                $current_step = 0;
 
-            $form = new Form();
-            $current_step = 0;
-            $decision;
+                $form->current_step = 0;
+                #$form->registrar_sessao(0,
+                #   form::SHOW_NOTAFISCAL(),
+                #   
+                #);
 
-            if(isset($_POST['pessoa_associada']))
-            {
-                $current_step = 1;
-                if($_POST['pessoa_associada'] === "novo")
+                #$form->registrar_sessao(1,
+                #   form::SHOW_PESSOAJURIDICA(),
+                #   form::SHOW_ENDERECO()
+                #);
+
+                if(isset($_POST['pessoa_associada']))
                 {
-                    $decision = false;
-                }
-                else
-                {
-                    $decision = true;
+                    if($_POST['pessoa_associada'] === "novo-pj")
+                    {
+                        #$current_step = 1;
+                        $form->current_step = 1;
+                    }
+                    else
+                    {
+                        #$current_step = 2;
+                        $form->current_step = 2;
+                    }
                 }
 
-                unset($_POST['estado']);
-            }
-
-            if(isset($_POST['pj_nome']))
-            {
-                $current_step = 2;
-                if($_POST['msmendereco'] === "nao")
+                if(isset($_POST['pj_nome']))
                 {
-                    $decision = false;
+                    #$current_step = 2;
+                    $form->current_step = 2;
                 }
-                else
-                {
-                    $decision = true;
-                }
-            }
 
-            if(isset($_POST['estado']))
-            {
-                $current_step = 3;
-            }
-
-            if($current_step === 0)
-            {
-                echo $current_step;
-                echo $form->form_notafiscal();
-                echo "<p class='form-input'>Deseja utilizar o mesmo endereço da pessoa cadastrada? (*)</p>
-                <div class='radio-option' id='radio-endereco-sim'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='sim'><p>Sim</p></div>
-                <div class='radio-option' id='radio-endereco-nao'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='nao'><p>Não</p></div>";
-                echo "<div id='form-append'></div>";
-            }
-            else if($current_step === 1)
-            {
-                echo $current_step;
-                if(!$decision)
+                if(isset($_POST['inf_cod']))
                 {
-                    echo $form->form_pessoajuridica();
-                    echo "<p class='form-input'>Deseja utilizar o mesmo endereço da nota fiscal? (*)</p>
-                <div class='radio-option'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='sim'><p>Sim</p></div>
-                <div class='radio-option'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='nao'><p>Não</p></div>";
+                    if($_POST['itemnotafiscal'] === 'sim')
+                    {
+                        #$current_step = 2;
+                        $form->current_step = 2;
+                    }
+                    else
+                    {
+                        #$current_step = 3;
+                        $form->current_step = 3;
+                    }
                 }
-                else
+
+                if(isset($_POST['ft_pagamento']))
+                {
+                    if($_POST['maisfaturas'] === 'sim')
+                    {
+                        #$current_step = 3;
+                        $form->current_step = 3;
+                    }
+                    else
+                    {
+                        #$current_step = 4;
+                        $form->current_step = 4;
+                        $_SESSION['submeter'] = 'sim';
+                    }
+                }
+
+                $form->registrar_sessao(0, (function() {
+                    echo Form::form_notafiscal();
+                }));
+
+                $form->registrar_sessao(1, (function() {
+                    # Armazenar os valores de NF
+                    $_SESSION['nf_data'] = $_POST['nf_data'];
+
+                    if($_POST['pessoa_associada'] === "novo-pj")
+                        echo Form::form_pessoajuridica();
+                    else
+                        echo Form::form_pessoafisica();
+
+                    echo Form::form_endereco();
+                }));
+
+                $form->registrar_sessao(2, (function() {
+                    echo Form::show_itemnotafiscal();
+                }));
+
+                $form->registrar_sessao(3, (function() {
+                    echo Form::show_fatura();
+                }));
+
+                $form->registrar_sessao(4, (function() {
+                    echo Form::form_endereco();
+                    session_destroy();
+                }));
+
+                if($current_step === 0)
+                {
+                    #echo $form->form_notafiscal();
+                }
+                else if($current_step === 1)
+                {
+                    # Armazenar os valores de NF
+                    #$_SESSION['nf_data'] = $_POST['nf_data'];
+
+                    #if($_POST['pessoa_associada'] === "novo-pj")
+                    #    echo $form->form_pessoajuridica();
+                    #else
+                    #    echo $form->form_pessoafisica();
+
+                    #echo $form->form_endereco();
+                }
+                else if($current_step === 2)
                 {
                     echo $form->show_itemnotafiscal();
                 }
-            }
-            else if($current_step === 2)
-            {
-                echo $current_step;
-                if(!$decision)
+                else if($current_step === 3)
+                {
+                    echo $form->show_fatura();
+                }
+                else if($current_step === 4)
                 {
                     echo $form->form_endereco();
+                    session_destroy();
                 }
-                else
-                {
-                    echo $form->show_itemnotafiscal();
-                }
-            }
-            else if($current_step === 3)
-            {
-                echo $current_step;
-                echo $form->show_itemnotafiscal();
-            }
-        ?>
-
-            <!--div id='form-nf'>
-                <h3>Nota Fiscal</h3>
-                <p class='form-input'>Data (*)</p>
-                <input type='date' name='nf_data' required>
-                <p class='form-input'>Desconto (*)</p>
-                <input type='number' name='nf_desconto' placeholder='R$000,00' min='0.00' max='999.999' step='0.01' required>
-                <p class='form-input'>Deseja utilizar o endereço para a nota fiscal? (*)</p>
-                <div class='radio-option'><input type='radio' class='radio-input' name='msmendereco' onclick="" value='sim'><p>Sim</p></div>
-                <div class='radio-option'><input type='radio' class='radio-input' name='msmendereco' onclick="" value='nao'><p>Não</p></div>
-                <p class='form-input'>Pessoa associada (*)</p>
-                <select name='pessoa_associada' required>
-                    <option value='novo'>CADASTRAR NOVO</option>
-                    <option value='enxuto'>ENXUTO</option>
-                    <option value='santa-rita'>SANTA RITA</option>
-                </select>
-            </div-->
+            ?>
 
             <script>
-                $(document).ready(function(){
+                $(document).ready(function() {
                     $("#radio-endereco-nao").on('change', function () { 
                         $('#form-append').append("<div class='form-endereco'>\
                         <h3>Endereço na Nota</h3>\
@@ -142,58 +170,7 @@
                 });
             </script>
 
-            <p><input id='form-button' type='submit' value='Próximo'></p>
-
-        <!--
-            <h3>Pessoa Jurídica</h3>
-            <p class="form-input">Nome Jurídico (*)</p>
-            <input type="text" name="pj_nome" placeholder="Nome" size="60" maxlength="60" required>
-            <p class="form-input">Nome Fantasia</p>
-            <input type="text" name="pj_nomefantasia" placeholder="Nome Fantasia" size="50" maxlength="50">
-            <p class="form-input">CNPJ (*)</p>
-            <input type="text" name="pj_cnpj" placeholder="00000000000000" pattern="[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{5}" size="14" maxlength="14" required>
-
-            <h3>Endereço</h3>
-            <p class="form-input">Estado (*)</p>
-            <input type="text" name="estado" placeholder="SP" size="2" maxlength="2" required>
-            <p class="form-input">Município (*)</p>
-            <input type="text" name="municipio" placeholder="São Paulo" size="20" maxlength="20" required>
-            <p class="form-input">Bairro (*)</p>
-            <input type="text" name="bairro" placeholder="Centro" size="30" maxlength="30" required>
-            <p class="form-input">Logradouro (*)</p>
-            <input type="text" name="logradouro" placeholder="Av. Paulista, 123" size="40" maxlength="40" required>
-
-            <h3>Item da Nota Fiscal</h3>
-            <p class="form-input">Código (*)</p>
-            <input type="text" name="inf_cod" placeholder="0000000000000000" size="16" maxlength="16" required>
-            <p class="form-input">Unidade (*)</p>
-            <select name="inf_unidade" required>
-              <option value="unitario">UNITÁRIO</option>
-              <option value="quilograma">KG</option>
-            </select>
-            <p class="form-input">Quantidade (*)</p>
-            <input type="number" name="inf_quantidade" placeholder="000,000" min="0.000" max="999.999" step="0.001" required>
-            <p class="form-input">Desconto (*)</p>
-            <input type="number" name="inf_desconto" placeholder="R$000,00" min="0.00" max="999.999" step="0.01" required>
-            <p class="form-input">Descrição (*)</p>
-            <input type="text" name="inf_descricao" placeholder="Aveia" size="100" maxlength="100" required>
-            <p class="form-input">Valor Unitário (*)</p>
-            <input type="number" name="inf_valorunitario" placeholder="R$00000,00" min="0.00" max="99999.99" step="0.01" required>
-
-            <h3>Fatura</h3>
-            <p class="form-input">Forma de Pagamento (*)</p>
-            <select name="ft_pagamento" required>
-              <option value="unitario">DÉBITO</option>
-              <option value="quilograma">CRÉDITO</option>
-              <option value="quilograma">À VISTA</option>
-            </select>
-            <p class="form-input">Data de Vencimento (*)</p>
-            <input type="date" name="ft_dtvencimento" required>
-            <p class="form-input">Data de Pagamento</p>
-            <input type="date" name="ft_dtpagamento">
-            <p class="form-input">Valor (*)</p>
-            <input type="number" name="ft_valor" placeholder="R$000000,00" min="0.00" max="999999.99" step="0.01" required>
-        -->
+            <p><input id='form-button' type='submit' value=<?php echo ($_SESSION['submeter'] === 'sim') ? 'Enviar' : 'Próximo' ?>></p>
         </form>
     </section>
 

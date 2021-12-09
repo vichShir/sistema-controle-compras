@@ -1,7 +1,22 @@
 <?php
 class Form
 {
-	public function form_notafiscal()
+    public $current_step;
+
+    function __construct()
+    {
+        $this->current_step = 0;
+    }
+
+    public function registrar_sessao($step, $func)
+    {
+        if($this->current_step === $step)
+        {
+            $func();
+        }
+    }
+
+	public static function form_notafiscal()
 	{
 		return "
 			<h3>Nota Fiscal</h3>
@@ -11,13 +26,18 @@ class Form
             <input type='number' name='nf_desconto' placeholder='R$000,00' min='0.00' max='999.999' step='0.01' required>
             <p class='form-input'>Pessoa associada (*)</p>
             <select name='pessoa_associada' required>
-                <option value='novo'>CADASTRAR NOVO</option>
+                <option value='novo-pj'>CADASTRAR NOVA PESSOA JURIDICA</option>
+                <option value='novo-pf'>CADASTRAR NOVA PESSOA FISICA</option>
                 <option value='enxuto'>ENXUTO</option>
                 <option value='santa-rita'>SANTA RITA</option>
-            </select>";
+            </select>" .
+            "<p class='form-input'>Utilizar o mesmo endereço da pessoa cadastrada na nota? (*)</p>
+            <div class='radio-option' id='radio-endereco-sim'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='sim' required><p>Sim</p></div>
+            <div class='radio-option' id='radio-endereco-nao'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='nao'><p>Não</p></div>" .
+            "<div id='form-append'></div>";
 	}
 
-    public function form_endereco()
+    public static function form_endereco()
     {
         return "
             <h3>Endereço</h3>
@@ -31,7 +51,7 @@ class Form
             <input type='text' name='logradouro' placeholder='Av. Paulista, 123' size='40' maxlength='40' required>";
     }
 
-	public function form_pessoajuridica()
+	public static function form_pessoajuridica()
 	{
 		return "
 			<h3>Pessoa Jurídica</h3>
@@ -43,7 +63,12 @@ class Form
             <input type='text' name='pj_cnpj' placeholder='00000000000000' pattern='[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{5}' size='14' maxlength='14' required>";
 	}
 
-    public function show_itemnotafiscal()
+    public static function form_pessoafisica()
+    {
+
+    }
+
+    public static function show_itemnotafiscal()
     {
         return "
             <h3>Item da Nota Fiscal</h3>
@@ -61,7 +86,32 @@ class Form
             <p class='form-input'>Descrição (*)</p>
             <input type='text' name='inf_descricao' placeholder='Aveia' size='100' maxlength='100' required>
             <p class='form-input'>Valor Unitário (*)</p>
-            <input type='number' name='inf_valorunitario' placeholder='R$00000,00' min='0.00' max='99999.99' step='0.01' required>";
+            <input type='number' name='inf_valorunitario' placeholder='R$00000,00' min='0.00' max='99999.99' step='0.01' required>" .
+            "<p class='form-input'>Há mais itens? (*)</p>
+            <div class='radio-option'><input type='radio' class='radio-input' name='itemnotafiscal' onclick='' value='sim' required><p>Sim</p></div>
+            <div class='radio-option'><input type='radio' class='radio-input' name='itemnotafiscal' onclick='' value='nao'><p>Não</p></div>";
+    }
+
+    public static function show_fatura()
+    {
+        return "
+            <h3>Fatura</h3>
+            <p class='form-input'>Forma de Pagamento (*)</p>
+            <select name='ft_pagamento' required>
+              <option value='unitario'>DÉBITO</option>
+              <option value='quilograma'>CRÉDITO</option>
+              <option value='quilograma'>À VISTA</option>
+              <option value='quilograma'>PIX</option>
+            </select>
+            <p class='form-input'>Data de Vencimento (*)</p>
+            <input type='date' name='ft_dtvencimento' required>
+            <p class='form-input'>Data de Pagamento</p>
+            <input type='date' name='ft_dtpagamento'>
+            <p class='form-input'>Valor (*)</p>
+            <input type='number' name='ft_valor' placeholder='R$000000,00' min='0.00' max='999999.99' step='0.01' required>" .
+            "<p class='form-input'>Há mais faturas? (*)</p>
+            <div class='radio-option'><input type='radio' class='radio-input' name='maisfaturas' onclick='' value='sim' required><p>Sim</p></div>
+            <div class='radio-option'><input type='radio' class='radio-input' name='maisfaturas' onclick='' value='nao'><p>Não</p></div>";
     }
 }
 ?>
