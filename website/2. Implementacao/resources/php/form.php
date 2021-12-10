@@ -1,16 +1,24 @@
 <?php
 class Form
 {
-    public $current_step;
+    public static $current_step = 0;
 
     function __construct()
     {
-        $this->current_step = 0;
+        
+    }
+
+    public function registrar_condicao($post_name, $func)
+    {
+        if(isset($_POST[$post_name]))
+        {
+            $func();
+        }
     }
 
     public function registrar_sessao($step, $func)
     {
-        if($this->current_step === $step)
+        if(Form::$current_step === $step)
         {
             $func();
         }

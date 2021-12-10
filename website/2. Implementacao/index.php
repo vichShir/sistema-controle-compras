@@ -27,68 +27,48 @@
                 require("resources/php/form.php");
 
                 $form = new Form();
-                $current_step = 0;
+                Form::$current_step = 0;
 
-                $form->current_step = 0;
-                #$form->registrar_sessao(0,
-                #   form::SHOW_NOTAFISCAL(),
-                #   
-                #);
-
-                #$form->registrar_sessao(1,
-                #   form::SHOW_PESSOAJURIDICA(),
-                #   form::SHOW_ENDERECO()
-                #);
-
-                if(isset($_POST['pessoa_associada']))
-                {
+                /* CONDICOES */
+                $form->registrar_condicao('pessoa_associada', function() {
                     if($_POST['pessoa_associada'] === "novo-pj")
                     {
-                        #$current_step = 1;
-                        $form->current_step = 1;
+                        Form::$current_step = 1;
                     }
                     else
                     {
-                        #$current_step = 2;
-                        $form->current_step = 2;
+                        Form::$current_step = 2;
                     }
-                }
+                });
 
-                if(isset($_POST['pj_nome']))
-                {
-                    #$current_step = 2;
-                    $form->current_step = 2;
-                }
+                $form->registrar_condicao('pj_nome', function() {
+                    Form::$current_step = 2;
+                });
 
-                if(isset($_POST['inf_cod']))
-                {
+                $form->registrar_condicao('inf_cod', function() {
                     if($_POST['itemnotafiscal'] === 'sim')
                     {
-                        #$current_step = 2;
-                        $form->current_step = 2;
+                        Form::$current_step = 2;
                     }
                     else
                     {
-                        #$current_step = 3;
-                        $form->current_step = 3;
+                        Form::$current_step = 3;
                     }
-                }
+                });
 
-                if(isset($_POST['ft_pagamento']))
-                {
+                $form->registrar_condicao('ft_pagamento', function() {
                     if($_POST['maisfaturas'] === 'sim')
                     {
-                        #$current_step = 3;
-                        $form->current_step = 3;
+                        Form::$current_step = 3;
                     }
                     else
                     {
-                        #$current_step = 4;
-                        $form->current_step = 4;
+                        Form::$current_step = 4;
                         $_SESSION['submeter'] = 'sim';
                     }
-                }
+                });
 
+                /* SESSOES */
                 $form->registrar_sessao(0, (function() {
                     echo Form::form_notafiscal();
                 }));
@@ -96,6 +76,7 @@
                 $form->registrar_sessao(1, (function() {
                     # Armazenar os valores de NF
                     $_SESSION['nf_data'] = $_POST['nf_data'];
+                    $_SESSION['nf_desconto'] = $_POST['nf_desconto'];
 
                     if($_POST['pessoa_associada'] === "novo-pj")
                         echo Form::form_pessoajuridica();
@@ -115,38 +96,9 @@
 
                 $form->registrar_sessao(4, (function() {
                     echo Form::form_endereco();
+
                     session_destroy();
                 }));
-
-                if($current_step === 0)
-                {
-                    #echo $form->form_notafiscal();
-                }
-                else if($current_step === 1)
-                {
-                    # Armazenar os valores de NF
-                    #$_SESSION['nf_data'] = $_POST['nf_data'];
-
-                    #if($_POST['pessoa_associada'] === "novo-pj")
-                    #    echo $form->form_pessoajuridica();
-                    #else
-                    #    echo $form->form_pessoafisica();
-
-                    #echo $form->form_endereco();
-                }
-                else if($current_step === 2)
-                {
-                    echo $form->show_itemnotafiscal();
-                }
-                else if($current_step === 3)
-                {
-                    echo $form->show_fatura();
-                }
-                else if($current_step === 4)
-                {
-                    echo $form->form_endereco();
-                    session_destroy();
-                }
             ?>
 
             <script>
