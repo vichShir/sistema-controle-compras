@@ -50,13 +50,13 @@ class Form
         return "
             <h3>Endereço</h3>
             <p class='form-input'>Estado (*)</p>
-            <input type='text' name='estado' placeholder='SP' size='2' maxlength='2' required>
+            <input type='text' name='ps_estado' placeholder='SP' size='2' maxlength='2' required>
             <p class='form-input'>Município (*)</p>
-            <input type='text' name='municipio' placeholder='São Paulo' size='20' maxlength='20' required>
+            <input type='text' name='ps_municipio' placeholder='São Paulo' size='20' maxlength='20' required>
             <p class='form-input'>Bairro (*)</p>
-            <input type='text' name='bairro' placeholder='Centro' size='30' maxlength='30' required>
+            <input type='text' name='ps_bairro' placeholder='Centro' size='30' maxlength='30' required>
             <p class='form-input'>Logradouro (*)</p>
-            <input type='text' name='logradouro' placeholder='Av. Paulista, 123' size='40' maxlength='40' required>";
+            <input type='text' name='ps_logradouro' placeholder='Av. Paulista, 123' size='40' maxlength='40' required>";
     }
 
 	public static function form_pessoajuridica()
@@ -106,10 +106,10 @@ class Form
             <h3>Fatura</h3>
             <p class='form-input'>Forma de Pagamento (*)</p>
             <select name='ft_pagamento' required>
-              <option value='unitario'>DÉBITO</option>
-              <option value='quilograma'>CRÉDITO</option>
-              <option value='quilograma'>À VISTA</option>
-              <option value='quilograma'>PIX</option>
+              <option value='debito'>DÉBITO</option>
+              <option value='credito'>CRÉDITO</option>
+              <option value='avista'>À VISTA</option>
+              <option value='pix'>PIX</option>
             </select>
             <p class='form-input'>Data de Vencimento (*)</p>
             <input type='date' name='ft_dtvencimento' required>
@@ -122,4 +122,83 @@ class Form
             <div class='radio-option'><input type='radio' class='radio-input' name='maisfaturas' onclick='' value='nao'><p>Não</p></div>";
     }
 }
+
+class NotaFiscal
+{
+    public $nf_data;
+    public $nf_desconto;
+    public $nf_estado;
+    public $nf_municipio;
+    public $nf_bairro;
+    public $nf_logradouro;
+
+    function __construct($nf_data, $nf_desconto, $nf_estado, $nf_municipio, $nf_bairro, $nf_logradouro)
+    {
+        $this->nf_data = $nf_data;
+        $this->nf_desconto = $nf_desconto;
+        $this->nf_estado = $nf_estado;
+        $this->nf_municipio = $nf_municipio;
+        $this->nf_bairro = $nf_bairro;
+        $this->nf_logradouro = $nf_logradouro;
+    }
+}
+
+class PessoaJuridica
+{
+    public $pj_nome;
+    public $pj_nomefantasia;
+    public $pj_cnpj;
+    public $pj_estado;
+    public $pj_municipio;
+    public $pj_bairro;
+    public $pj_logradouro;
+
+    function __construct($pj_nome, $pj_nomefantasia, $pj_cnpj, $pj_estado, $pj_municipio, $pj_bairro, $pj_logradouro)
+    {
+        $this->pj_nome = $pj_nome;
+        $this->pj_nomefantasia = $pj_nomefantasia;
+        $this->pj_cnpj = $pj_cnpj;
+        $this->pj_estado = $pj_estado;
+        $this->pj_municipio = $pj_municipio;
+        $this->pj_bairro = $pj_bairro;
+        $this->pj_logradouro = $pj_logradouro;
+    }
+}
+
+class ItemNotaFiscal
+{
+    public $cod;
+    public $unidade;
+    public $quantidade;
+    public $desconto;
+    public $descricao;
+    public $valorunitario;
+
+    function __construct($cod, $unidade, $quantidade, $desconto, $descricao, $valorunitario)
+    {
+        $this->cod = $cod;
+        $this->unidade = $unidade;
+        $this->quantidade = $quantidade;
+        $this->desconto = $desconto;
+        $this->descricao = $descricao;
+        $this->valorunitario = $valorunitario;
+    }
+}
+
+class Fatura
+{
+    public $ft_pagamento;
+    public $ft_dtvencimento;
+    public $ft_dtpagamento;
+    public $ft_valor;
+
+    function __construct($ft_pagamento, $ft_dtvencimento, $ft_dtpagamento, $ft_valor)
+    {
+        $this->ft_pagamento = $ft_pagamento;
+        $this->ft_dtvencimento = $ft_dtvencimento;
+        $this->ft_dtpagamento = $ft_dtpagamento;
+        $this->ft_valor = $ft_valor;
+    }
+}
+
 ?>
