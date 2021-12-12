@@ -6,6 +6,7 @@
   <head>
     <meta charset="utf-8">
     <title>Cadastrar Nota Fiscal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link href="resources/css/main-style.css" rel="stylesheet" type="text/css"/>
     <link href="resources/css/form-style.css" rel="stylesheet" type="text/css"/>
     <link href="resources/css/footer-style.css" rel="stylesheet" type="text/css"/>
@@ -207,22 +208,58 @@
 
                     $all_faturas = retrieve_array('all_faturas');
                     array_push($all_faturas, serialize($fatura));
-                    echo 'Faturas: <br>';
-                    print_r($all_faturas);
                     $_SESSION['all_faturas'] = $all_faturas;
 
-                    echo "Nota Fiscal<br>";
-                    echo print_r(unserialize($_SESSION['nota_fiscal'])) . "<br>";
+                    $nota = unserialize($_SESSION['nota_fiscal']);
+                    $pj = unserialize($_SESSION['pessoa_juridica']);
+                    # Print nota fiscal
+                    echo "<h3>" . $pj->pj_nome . "</h3>
+                    <p>CNPJ: " . $pj->pj_cnpj . "</p>
+                    <p>" . $pj->pj_logradouro . ", " . $pj->pj_bairro . ", " . $pj->pj_municipio . ", " . $pj->pj_estado . "</p>
+                    <table class='table table-dark table-striped table-hover'>
+                        <thead>
+                            <tr>
+                                <th scope='col'>#</th>
+                                <th scope='col'>Código</th>
+                                <th scope='col'>Descrição</th>
+                                <th scope='col'>Quantidade</th>
+                                <th scope='col'>Unidade</th>
+                                <th scope='col'>Valor Unitário</th>
+                                <th scope='col'>Valor Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+                        $itens_total = array();
+                        $itens_descontos = array();
+                        for($i = 0; $i < sizeof($_SESSION['all_items']); $i++)
+                        #foreach($_SESSION['all_items'] as $item)
+                        {
+                            $item = $_SESSION['all_items'][$i];
+                            $item_nf = unserialize($item);
+                            $total = $item_nf->quantidade * $item_nf->valorunitario;
+                            $desconto = $item_nf->desconto;
+                            array_push($itens_total, $total);
+                            array_push($itens_descontos, $desconto);
+                            echo "<tr>";
+                            echo "
+                            <th scope='row'>" . $i . "</th>
+                            <td>" . $item_nf->cod . "</td>
+                            <td>" . $item_nf->descricao . "</td>
+                            <td>" . $item_nf->quantidade . "</td>
+                            <td>" . $item_nf->unidade . "</td>
+                            <td>" . $item_nf->valorunitario . "</td>
+                            <td>" . $total . "</td>";
+                            echo "</tr>";
+                        }
+                        echo "</tbody>
+                    </table>";
+                    $itens_total = floatval(array_sum($itens_total));
+                    $itens_descontos = floatval(array_sum($itens_descontos));
 
-                    echo "Pessoa Juridica<br>";
-                    echo print_r(unserialize($_SESSION['pessoa_juridica'])) . "<br>";
-
-                    echo "Itens de Nota Fiscal<br>";
-                    foreach($_SESSION['all_items'] as $item)
-                    {
-                        echo print_r(unserialize($item)) . "<br>";
-                    }
-
+                    echo "<p>Qtd. total de itens: " . sizeof($_SESSION['all_items']) . "</p>";
+                    echo "<p>Valor total R$: " . $itens_total . "</p>";
+                    echo "<p>Descontos R$: " . $itens_descontos . "</p>";
+                    echo "<p>Valor a pagar R$: " . ($itens_total - $itens_descontos) . "</p>";
                     $_SESSION['enviado'] = 1;
                 }));
 
@@ -246,6 +283,35 @@
                     return false;
                 }
             ?>
+
+            <!--h3>pj_nome</h3>
+            <p>CNPJ: pj_cnpj</p>
+            <p>pj_logradouro, pj_bairro, pj_municipio, pj_estado</p>
+
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Descrição</th>
+                        <th scope="col">Quantidade</th>
+                        <th scope="col">Unidade</th>
+                        <th scope="col">Valor Unitário</th>
+                        <th scope="col">Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>cod</td>
+                        <td>descricao</td>
+                        <td>quantidade</td>
+                        <td>unidade</td>
+                        <td>valorunitario</td>
+                        <td>quantidade * valorunitario</td>
+                    </tr>
+                </tbody>
+            </table-->
 
             <script>
                 $(document).ready(function() {

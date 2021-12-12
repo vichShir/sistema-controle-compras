@@ -29,7 +29,7 @@ class Form
 		return "
 			<h3>Nota Fiscal</h3>
             <p class='form-input'>Data (*)</p>
-            <input type='date' name='nf_data' required>
+            <input type='datetime-local' name='nf_data' required>
             <p class='form-input'>Desconto (*)</p>
             <input type='number' name='nf_desconto' placeholder='R$000,00' min='0.00' max='999.999' step='0.01' required>
             <p class='form-input'>Pessoa associada (*)</p>
