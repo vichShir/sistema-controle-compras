@@ -84,8 +84,8 @@ class Form
             <input type='text' name='inf_cod' placeholder='0000000000000000' size='16' maxlength='16' required>
             <p class='form-input'>Unidade (*)</p>
             <select name='inf_unidade' required>
-              <option value='unitario'>UNITÁRIO</option>
-              <option value='quilograma'>KG</option>
+              <option value='UN'>UNITÁRIO</option>
+              <option value='KG'>KG</option>
             </select>
             <p class='form-input'>Quantidade (*)</p>
             <input type='number' name='inf_quantidade' placeholder='000,000' min='0.000' max='999.999' step='0.001' required>
@@ -106,10 +106,10 @@ class Form
             <h3>Fatura</h3>
             <p class='form-input'>Forma de Pagamento (*)</p>
             <select name='ft_pagamento' required>
-              <option value='debito'>DÉBITO</option>
-              <option value='credito'>CRÉDITO</option>
-              <option value='avista'>À VISTA</option>
-              <option value='pix'>PIX</option>
+              <option value='DB'>DÉBITO</option>
+              <option value='CR'>CRÉDITO</option>
+              <option value='VS'>À VISTA</option>
+              <option value='PX'>PIX</option>
             </select>
             <p class='form-input'>Data de Vencimento (*)</p>
             <input type='date' name='ft_dtvencimento' required>

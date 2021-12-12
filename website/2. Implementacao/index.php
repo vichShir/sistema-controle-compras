@@ -81,15 +81,7 @@
 
                 $form->registrar_sessao(1, (function() {
                     # Armazenar os valores de NF
-                    $nota = new NotaFiscal(
-                        $_POST['nf_data'] ?? '',
-                        $_POST['nf_desconto'] ?? '',
-                        $_POST['nf_estado'] ?? '',
-                        $_POST['nf_municipio'] ?? '',
-                        $_POST['nf_bairro'] ?? '',
-                        $_POST['nf_logradouro'] ?? ''
-                    );
-                    $_SESSION['nota_fiscal'] = serialize($nota);
+                    try_to_store_nf();
 
                     if($_POST['pessoa_associada'] === "novo-pj")
                         echo Form::form_pessoajuridica();
@@ -101,165 +93,39 @@
 
                 $form->registrar_sessao(2, (function() {
                     # Armazenar os valores de NF
-                    if(!isset($_SESSION['nota_fiscal']))
-                    {
-                        $nota = new NotaFiscal(
-                            $_POST['nf_data'] ?? '',
-                            $_POST['nf_desconto'] ?? '',
-                            $_POST['nf_estado'] ?? '',
-                            $_POST['nf_municipio'] ?? '',
-                            $_POST['nf_bairro'] ?? '',
-                            $_POST['nf_logradouro'] ?? ''
-                        );
-                        echo 'Nota Fiscal: <br>';
-                        print_r($nota);
-                        echo '<br>';
-                        $_SESSION['nota_fiscal'] = serialize($nota);
-                    }
+                    try_to_store_nf();
 
                     # Armazenar os valores de pessoa juridica
-                    if(!isset($_SESSION['pessoa_juridica']))
-                    {
-                        $pj = new PessoaJuridica(
-                            $_POST['pj_nome'] ?? '',
-                            $_POST['pj_nomefantasia'] ?? '',
-                            $_POST['pj_cnpj'] ?? '',
-                            $_POST['ps_estado'] ?? '',
-                            $_POST['ps_municipio'] ?? '',
-                            $_POST['ps_bairro'] ?? '',
-                            $_POST['ps_logradouro'] ?? ''
-                        );
-                        echo 'Pessoa Juridica: <br>';
-                        print_r($pj);
-                        echo '<br>';
-                        $_SESSION['pessoa_juridica'] = serialize($pj);
-                    }
+                    try_to_store_pj();
 
                     # Armazenar os valores do item de nota fiscal
-                    $item = new ItemNotaFiscal(
-                        $_POST['inf_cod'] ?? '',
-                        $_POST['inf_unidade'] ?? '',
-                        $_POST['inf_quantidade'] ?? '',
-                        $_POST['inf_desconto'] ?? '',
-                        $_POST['inf_descricao'] ?? '',
-                        $_POST['inf_valorunitario'] ?? ''
-                    );
-
-                    if(!is_empty($item))
-                    {
-                        $all_items = retrieve_array('all_items');
-                        array_push($all_items, serialize($item));
-                        echo 'Itens: <br>';
-                        print_r($all_items);
-                        $_SESSION['all_items'] = $all_items;
-                    }
+                    try_to_store_inf();
 
                     echo Form::show_itemnotafiscal();
                 }));
 
                 $form->registrar_sessao(3, (function() {
                     # Armazenar os valores do item de nota fiscal
-                    $item = new ItemNotaFiscal(
-                        $_POST['inf_cod'] ?? '',
-                        $_POST['inf_unidade'] ?? '',
-                        $_POST['inf_quantidade'] ?? '',
-                        $_POST['inf_desconto'] ?? '',
-                        $_POST['inf_descricao'] ?? '',
-                        $_POST['inf_valorunitario'] ?? ''
-                    );
-
-                    if(!is_empty($item))
-                    {
-                        $all_items = retrieve_array('all_items');
-                        array_push($all_items, serialize($item));
-                        echo 'Itens: <br>';
-                        print_r($all_items);
-                        $_SESSION['all_items'] = $all_items;
-                    }
+                    try_to_store_inf();
 
                     # Armazenar os valores de fatura
-                    $fatura = new Fatura(
-                        $_POST['ft_pagamento'] ?? '',
-                        $_POST['ft_dtvencimento'] ?? '',
-                        $_POST['ft_dtpagamento'] ?? '',
-                        $_POST['ft_valor'] ?? ''
-                    );
-
-                    if(isset($_POST['ft_pagamento']))
-                    {
-                        $all_faturas = retrieve_array('all_faturas');
-                        array_push($all_faturas, serialize($fatura));
-                        echo 'Faturas: <br>';
-                        print_r($all_faturas);
-                        $_SESSION['all_faturas'] = $all_faturas;
-                    }
+                    try_to_store_ft();
 
                     echo Form::show_fatura();
                 }));
 
                 $form->registrar_sessao(4, (function() {
                     # Armazenar os valores de fatura
-                    $fatura = new Fatura(
-                        $_POST['ft_pagamento'] ?? '',
-                        $_POST['ft_dtvencimento'] ?? '',
-                        $_POST['ft_dtpagamento'] ?? '',
-                        $_POST['ft_valor'] ?? ''
-                    );
-
-                    $all_faturas = retrieve_array('all_faturas');
-                    array_push($all_faturas, serialize($fatura));
-                    $_SESSION['all_faturas'] = $all_faturas;
+                    try_to_store_ft();
 
                     $nota = unserialize($_SESSION['nota_fiscal']);
                     $pj = unserialize($_SESSION['pessoa_juridica']);
+                    $all_items = $_SESSION['all_items'];
+                    $all_faturas = $_SESSION['all_faturas'];
+                    
                     # Print nota fiscal
-                    echo "<h3>" . $pj->pj_nome . "</h3>
-                    <p>CNPJ: " . $pj->pj_cnpj . "</p>
-                    <p>" . $pj->pj_logradouro . ", " . $pj->pj_bairro . ", " . $pj->pj_municipio . ", " . $pj->pj_estado . "</p>
-                    <table class='table table-dark table-striped table-hover'>
-                        <thead>
-                            <tr>
-                                <th scope='col'>#</th>
-                                <th scope='col'>Código</th>
-                                <th scope='col'>Descrição</th>
-                                <th scope='col'>Quantidade</th>
-                                <th scope='col'>Unidade</th>
-                                <th scope='col'>Valor Unitário</th>
-                                <th scope='col'>Valor Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>";
-                        $itens_total = array();
-                        $itens_descontos = array();
-                        for($i = 0; $i < sizeof($_SESSION['all_items']); $i++)
-                        #foreach($_SESSION['all_items'] as $item)
-                        {
-                            $item = $_SESSION['all_items'][$i];
-                            $item_nf = unserialize($item);
-                            $total = $item_nf->quantidade * $item_nf->valorunitario;
-                            $desconto = $item_nf->desconto;
-                            array_push($itens_total, $total);
-                            array_push($itens_descontos, $desconto);
-                            echo "<tr>";
-                            echo "
-                            <th scope='row'>" . $i . "</th>
-                            <td>" . $item_nf->cod . "</td>
-                            <td>" . $item_nf->descricao . "</td>
-                            <td>" . $item_nf->quantidade . "</td>
-                            <td>" . $item_nf->unidade . "</td>
-                            <td>" . $item_nf->valorunitario . "</td>
-                            <td>" . $total . "</td>";
-                            echo "</tr>";
-                        }
-                        echo "</tbody>
-                    </table>";
-                    $itens_total = floatval(array_sum($itens_total));
-                    $itens_descontos = floatval(array_sum($itens_descontos));
+                    print_nf($nota, $pj);
 
-                    echo "<p>Qtd. total de itens: " . sizeof($_SESSION['all_items']) . "</p>";
-                    echo "<p>Valor total R$: " . $itens_total . "</p>";
-                    echo "<p>Descontos R$: " . $itens_descontos . "</p>";
-                    echo "<p>Valor a pagar R$: " . ($itens_total - $itens_descontos) . "</p>";
                     $_SESSION['enviado'] = 1;
                 }));
 
@@ -281,6 +147,155 @@
                             return true;
                     }
                     return false;
+                }
+
+                function try_to_store_nf()
+                {
+                    # Armazenar os valores de NF
+                    if(!isset($_SESSION['nota_fiscal']))
+                    {
+                        $nota = new NotaFiscal(
+                            $_POST['nf_data'] ?? '',
+                            $_POST['nf_desconto'] ?? '',
+                            $_POST['nf_estado'] ?? '',
+                            $_POST['nf_municipio'] ?? '',
+                            $_POST['nf_bairro'] ?? '',
+                            $_POST['nf_logradouro'] ?? ''
+                        );
+                        $_SESSION['nota_fiscal'] = serialize($nota);
+                    }
+                }
+
+                function try_to_store_pj()
+                {
+                    if(!isset($_SESSION['pessoa_juridica']))
+                    {
+                        $pj = new PessoaJuridica(
+                            $_POST['pj_nome'] ?? '',
+                            $_POST['pj_nomefantasia'] ?? '',
+                            $_POST['pj_cnpj'] ?? '',
+                            $_POST['ps_estado'] ?? '',
+                            $_POST['ps_municipio'] ?? '',
+                            $_POST['ps_bairro'] ?? '',
+                            $_POST['ps_logradouro'] ?? ''
+                        );
+                        $_SESSION['pessoa_juridica'] = serialize($pj);
+                    }
+                }
+
+                function try_to_store_inf()
+                {
+                    $item = new ItemNotaFiscal(
+                        $_POST['inf_cod'] ?? '',
+                        $_POST['inf_unidade'] ?? '',
+                        $_POST['inf_quantidade'] ?? '',
+                        $_POST['inf_desconto'] ?? '',
+                        $_POST['inf_descricao'] ?? '',
+                        $_POST['inf_valorunitario'] ?? ''
+                    );
+
+                    if(!is_empty($item))
+                    {
+                        $all_items = retrieve_array('all_items');
+                        array_push($all_items, serialize($item));
+                        $_SESSION['all_items'] = $all_items;
+                    }
+                }
+
+                function try_to_store_ft()
+                {
+                    $fatura = new Fatura(
+                        $_POST['ft_pagamento'] ?? '',
+                        $_POST['ft_dtvencimento'] ?? '',
+                        $_POST['ft_dtpagamento'] ?? '',
+                        $_POST['ft_valor'] ?? ''
+                    );
+
+                    if(isset($_POST['ft_pagamento']))
+                    {
+                        $all_faturas = retrieve_array('all_faturas');
+                        array_push($all_faturas, serialize($fatura));
+                        $_SESSION['all_faturas'] = $all_faturas;
+                    }
+                }
+
+                function print_nf($nota, $pj)
+                {
+                    echo "<h3>" . $pj->pj_nome . "</h3>
+                    <p>CNPJ: " . $pj->pj_cnpj . "</p>
+                    <p>" . $pj->pj_logradouro . ", " . $pj->pj_bairro . ", " . $pj->pj_municipio . ", " . $pj->pj_estado . "</p>
+                    <p>" . $nota->nf_data . "</p>
+                    <table class='table table-dark table-striped table-hover'>
+                        <thead>
+                            <tr>
+                                <th scope='col'>#</th>
+                                <th scope='col'>Código</th>
+                                <th scope='col'>Descrição</th>
+                                <th scope='col'>Quantidade</th>
+                                <th scope='col'>Unidade</th>
+                                <th scope='col'>Valor Unitário</th>
+                                <th scope='col'>Valor Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+                        $itens_total = array();
+                        $itens_descontos = array();
+                        for($i = 0; $i < sizeof($_SESSION['all_items']); $i++)
+                        {
+                            $item = $_SESSION['all_items'][$i];
+                            $item_nf = unserialize($item);
+                            $total = $item_nf->quantidade * $item_nf->valorunitario;
+                            $desconto = $item_nf->desconto;
+                            array_push($itens_total, $total);
+                            array_push($itens_descontos, $desconto);
+                            echo "<tr>";
+                            echo "
+                            <th scope='row'>" . ($i+1) . "</th>
+                            <td>" . $item_nf->cod . "</td>
+                            <td>" . $item_nf->descricao . "</td>
+                            <td>" . $item_nf->quantidade . "</td>
+                            <td>" . $item_nf->unidade . "</td>
+                            <td>R$" . $item_nf->valorunitario . "</td>
+                            <td>R$" . $total . "</td>";
+                            echo "</tr>";
+                        }
+                        echo "</tbody>
+                    </table>";
+                    
+                    $itens_total = floatval(array_sum($itens_total));
+                    $itens_descontos = floatval(array_sum($itens_descontos));
+                    echo "<p>Qtd. total de itens: " . sizeof($_SESSION['all_items']) . "</p>";
+                    echo "<p>Valor total R$: " . $itens_total . "</p>";
+                    echo "<p>Descontos R$: " . $itens_descontos . "</p>";
+                    echo "<p>Valor a pagar R$: " . ($itens_total - $itens_descontos) . "</p>";
+
+                    echo "
+                    <table class='table table-dark table-striped table-hover'>
+                        <thead>
+                            <tr>
+                                <th scope='col'>#</th>
+                                <th scope='col'>Forma de pagamento</th>
+                                <th scope='col'>Data Vencimento</th>
+                                <th scope='col'>Data Pagamento</th>
+                                <th scope='col'>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+                        for($i = 0; $i < sizeof($_SESSION['all_faturas']); $i++)
+                        {
+                            $fatura_serialize = $_SESSION['all_faturas'][$i];
+                            $fatura = unserialize($fatura_serialize);
+                            echo "<tr>";
+                            echo "
+                            <th scope='row'>" . ($i+1) . "</th>
+                            <td>" . $fatura->ft_pagamento . "</td>
+                            <td>" . $fatura->ft_dtvencimento . "</td>
+                            <td>" . $fatura->ft_dtpagamento . "</td>
+                            <td>R$" . $fatura->ft_valor . "</td>";
+                            echo "</tr>";
+                        }
+                        echo "</tbody>
+                    </table>";
                 }
             ?>
 
