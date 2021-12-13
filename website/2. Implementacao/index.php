@@ -25,12 +25,13 @@
         
         <form name="formulario" action="index.php" method="POST">
             <?php
+                require("resources/php/database.php");
                 require("resources/php/form.php");
 
                 $form = new Form();
                 Form::$current_step = 0;
 
-                if($_SESSION['enviado'] === 1)
+                if(isset($_SESSION['enviado']) === 1)
                 {
                     session_unset();
                 }
@@ -125,6 +126,24 @@
                     
                     # Print nota fiscal
                     print_nf($nota, $pj);
+
+                    $db = new Database();
+                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_juridica ?, ?, ?, ?, ?, ?, ?;");
+                    $sth->bindParam(1, $pj->pj_nome);
+                    $sth->bindParam(2, $pj->pj_cnpj);
+                    $sth->bindParam(3, $pj->pj_nomefantasia);
+                    $sth->bindParam(4, $pj->pj_estado);
+                    $sth->bindParam(5, $pj->pj_municipio);
+                    $sth->bindParam(6, $pj->pj_bairro);
+                    $sth->bindParam(7, $pj->pj_logradouro);
+                    $sth->execute();
+                    $sth->nextRowset();
+
+                    while($result = $sth->fetch(PDO::FETCH_ASSOC)) {
+                        var_dump($result);
+                    }
+
+                    $db->close();
 
                     $_SESSION['enviado'] = 1;
                 }));
@@ -349,7 +368,7 @@
                 });
             </script>
 
-            <p><input id='form-button' type='submit' value=<?php echo ($_SESSION['submeter'] === 'sim') ? 'Enviar' : 'Próximo' ?>></p>
+            <p><input id='form-button' type='submit' value=<?php echo isset($_SESSION['submeter']) ? 'Enviar' : 'Próximo' ?>></p>
         </form>
     </section>
 
