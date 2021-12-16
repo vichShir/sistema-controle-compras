@@ -131,6 +131,7 @@ class NotaFiscal
     public $nf_municipio;
     public $nf_bairro;
     public $nf_logradouro;
+    public $nf_codpessoa;
 
     function __construct($nf_data, $nf_desconto, $nf_estado, $nf_municipio, $nf_bairro, $nf_logradouro)
     {
@@ -140,6 +141,11 @@ class NotaFiscal
         $this->nf_municipio = $nf_municipio;
         $this->nf_bairro = $nf_bairro;
         $this->nf_logradouro = $nf_logradouro;
+    }
+
+    function set_codpessoa($codpessoa)
+    {
+        $this->nf_codpessoa = $codpessoa;
     }
 }
 

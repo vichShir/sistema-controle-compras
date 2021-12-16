@@ -128,20 +128,31 @@
                     print_nf($nota, $pj);
 
                     $db = new Database();
-                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_juridica ?, ?, ?, ?, ?, ?, ?;");
-                    $sth->bindParam(1, $pj->pj_nome);
-                    $sth->bindParam(2, $pj->pj_cnpj);
-                    $sth->bindParam(3, $pj->pj_nomefantasia);
-                    $sth->bindParam(4, $pj->pj_estado);
-                    $sth->bindParam(5, $pj->pj_municipio);
-                    $sth->bindParam(6, $pj->pj_bairro);
-                    $sth->bindParam(7, $pj->pj_logradouro);
-                    $sth->execute();
-                    $sth->nextRowset();
 
-                    while($result = $sth->fetch(PDO::FETCH_ASSOC)) {
-                        var_dump($result);
+                    // Pessoa Juridica
+                    exec_pj_stored_procedure($db, $pj->pj_nome, $pj->pj_cnpj, $pj->pj_nomefantasia, $pj->pj_estado, $pj->pj_municipio, $pj->pj_bairro, $pj->pj_logradouro);
+
+                    // Nota Fiscal
+                    $nota->set_codpessoa(1);
+                    exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, '1', $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
+
+                    // Fatura
+                    foreach ($all_faturas as $fatura_un) 
+                    {
+                        $fatura = unserialize($fatura_un);
+                        exec_ft_stored_procedure($db, $fatura->ft_dtvencimento, $fatura->ft_dtpagamento, $fatura->ft_valor, 1, $fatura->ft_pagamento, 1);
                     }
+
+                    // Itens de nota fiscal
+                    foreach ($all_items as $item_un) 
+                    {
+                        $item = unserialize($item_un);
+                        exec_inf_stored_procedure($db, 1, 0, $item->unidade, $item->quantidade, $item->desconto, $item->cod, $item->descricao, $item->valorunitario);
+                    }
+
+                    #while($result = $sth->fetch(PDO::FETCH_ASSOC)) {
+                    #    var_dump($result);
+                    #}
 
                     $db->close();
 
@@ -315,6 +326,68 @@
                         }
                         echo "</tbody>
                     </table>";
+                }
+
+                function exec_pj_stored_procedure($db, $pj_nome, $pj_cnpj, $pj_nomefantasia, $pj_estado, $pj_municipio, $pj_bairro, $pj_logradouro)
+                {
+                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_juridica ?, ?, ?, ?, ?, ?, ?;");
+                    $sth->bindParam(1, $pj_nome);
+                    $sth->bindParam(2, $pj_cnpj);
+                    $sth->bindParam(3, $pj_nomefantasia);
+                    $sth->bindParam(4, $pj_estado);
+                    $sth->bindParam(5, $pj_municipio);
+                    $sth->bindParam(6, $pj_bairro);
+                    $sth->bindParam(7, $pj_logradouro);
+                    $sth->execute();
+                    $sth->nextRowset();
+                }
+
+                function exec_nf_stored_procedure($db, $nf_data, $nf_desconto, $codpessoa, $nf_estado, $nf_municipio, $nf_bairro, $nf_logradouro)
+                {
+                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_notafiscal ?, ?, ?, ?, ?, ?, ?, ?;");
+                    $valortotal = 0;
+
+                    $date = new DateTime($nf_data);
+                    $date = $date->format('Y-m-d H:i:s');
+
+                    $sth->bindParam(1, $valortotal);
+                    $sth->bindParam(2, $date);
+                    $sth->bindParam(3, $nf_desconto);
+                    $sth->bindParam(4, $codpessoa);
+                    $sth->bindParam(5, $nf_estado);
+                    $sth->bindParam(6, $nf_municipio);
+                    $sth->bindParam(7, $nf_bairro);
+                    $sth->bindParam(8, $nf_logradouro);
+                    $sth->execute();
+                    $sth->nextRowset();
+                }
+
+                function exec_ft_stored_procedure($db, $dtvencimento, $dtpagamento, $valor, $numnota, $forma, $codcartao)
+                {
+                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_fatura ?, ?, ?, ?, ?, ?;");
+                    $sth->bindParam(1, $dtvencimento);
+                    $sth->bindParam(2, $dtpagamento);
+                    $sth->bindParam(3, $valor);
+                    $sth->bindParam(4, $numnota);
+                    $sth->bindParam(5, $forma);
+                    $sth->bindParam(6, $codcartao);
+                    $sth->execute();
+                    $sth->nextRowset();
+                }
+
+                function exec_inf_stored_procedure($db, $numnota, $valortotal, $unidademedida, $quantidade, $desconto, $codigo, $descricao, $valorunitario)
+                {
+                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_itemnotafiscal ?, ?, ?, ?, ?, ?, ?, ?;");
+                    $sth->bindParam(1, $numnota);
+                    $sth->bindParam(2, $valortotal);
+                    $sth->bindParam(3, $unidademedida);
+                    $sth->bindParam(4, $quantidade);
+                    $sth->bindParam(5, $desconto);
+                    $sth->bindParam(6, $codigo);
+                    $sth->bindParam(7, $descricao);
+                    $sth->bindParam(8, $valorunitario);
+                    $sth->execute();
+                    $sth->nextRowset();
                 }
             ?>
 
