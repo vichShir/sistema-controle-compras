@@ -129,6 +129,12 @@
 
                     $db = new Database();
 
+                    /*  Pegar:
+                    codpessoa
+                    numnota
+                    codcartao
+                    */
+
                     // Pessoa Juridica
                     exec_pj_stored_procedure($db, $pj->pj_nome, $pj->pj_cnpj, $pj->pj_nomefantasia, $pj->pj_estado, $pj->pj_municipio, $pj->pj_bairro, $pj->pj_logradouro);
 
@@ -274,7 +280,7 @@
                         {
                             $item = $_SESSION['all_items'][$i];
                             $item_nf = unserialize($item);
-                            $total = $item_nf->quantidade * $item_nf->valorunitario;
+                            $total = round($item_nf->quantidade * $item_nf->valorunitario, 2);
                             $desconto = $item_nf->desconto;
                             array_push($itens_total, $total);
                             array_push($itens_descontos, $desconto);

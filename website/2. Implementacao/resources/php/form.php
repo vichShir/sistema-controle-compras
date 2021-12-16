@@ -26,7 +26,11 @@ class Form
 
 	public static function form_notafiscal()
 	{
-		return "
+        $db = new Database();
+        $all_pessoas = $db->getAllRowsFromQuery("SELECT * FROM pessoa");
+        $db->close();
+
+		$output =  "
 			<h3>Nota Fiscal</h3>
             <p class='form-input'>Data (*)</p>
             <input type='datetime-local' name='nf_data' required>
@@ -35,14 +39,19 @@ class Form
             <p class='form-input'>Pessoa associada (*)</p>
             <select name='pessoa_associada' required>
                 <option value='novo-pj'>CADASTRAR NOVA PESSOA JURIDICA</option>
-                <option value='novo-pf'>CADASTRAR NOVA PESSOA FISICA</option>
-                <option value='enxuto'>ENXUTO</option>
-                <option value='santa-rita'>SANTA RITA</option>
-            </select>" .
+                <option value='novo-pf'>CADASTRAR NOVA PESSOA FISICA</option>";
+
+        foreach ($all_pessoas as $pessoa)
+        {
+            $output .= "<option value='" . $pessoa['nome'] . "'>" . $pessoa['nome'] . "</option>";
+        }
+
+        $output .= "</select>" .
             "<p class='form-input'>Utilizar o mesmo endereço da pessoa cadastrada na nota? (*)</p>
             <div class='radio-option' id='radio-endereco-sim'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='sim' required><p>Sim</p></div>
             <div class='radio-option' id='radio-endereco-nao'><input type='radio' class='radio-input' name='msmendereco' onclick='' value='nao'><p>Não</p></div>" .
             "<div id='form-append'></div>";
+        return $output;
 	}
 
     public static function form_endereco()
