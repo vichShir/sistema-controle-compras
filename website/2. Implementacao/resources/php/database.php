@@ -121,6 +121,11 @@ class Database
         return $this->retrieveAllRows($stmt);
     }
 
+    public function getLastID()
+    {
+        return $this->conn->lastInsertId();
+    }
+
     private function validateQuery($statement)
     {
         return $statement->rowCount() === 1;

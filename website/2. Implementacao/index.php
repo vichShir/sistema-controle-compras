@@ -30,6 +30,7 @@
 
                 $form = new Form();
                 Form::$current_step = 0;
+                #session_unset();
 
                 if(isset($_SESSION['enviado']) === 1)
                 {
@@ -130,30 +131,35 @@
                     $db = new Database();
 
                     /*  Pegar:
-                    codpessoa
-                    numnota
-                    codcartao
+                    codpessoa de pessoa juridica ou fisica
+                    numnota da nota atual
+                    codcartao se for debito ou credito
                     */
 
                     // Pessoa Juridica
                     exec_pj_stored_procedure($db, $pj->pj_nome, $pj->pj_cnpj, $pj->pj_nomefantasia, $pj->pj_estado, $pj->pj_municipio, $pj->pj_bairro, $pj->pj_logradouro);
+                    $result = $db->getAllRowsFromQuery("SELECT IDENT_CURRENT('pessoa')");
+                    $pessoa_id = $result[0][''];
+                    echo "New record created successfully. Last inserted ID pessoa is: " . $pessoa_id . "<br>";
 
                     // Nota Fiscal
                     $nota->set_codpessoa(1);
-                    exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, '1', $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
+                    exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, $pessoa_id, $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
+                    $nota_id = $db->getLastID();
+                    echo "New record created successfully. Last inserted ID numnota is: " . $nota_id;
 
                     // Fatura
                     foreach ($all_faturas as $fatura_un) 
                     {
                         $fatura = unserialize($fatura_un);
-                        exec_ft_stored_procedure($db, $fatura->ft_dtvencimento, $fatura->ft_dtpagamento, $fatura->ft_valor, 1, $fatura->ft_pagamento, 1);
+                        exec_ft_stored_procedure($db, $fatura->ft_dtvencimento, $fatura->ft_dtpagamento, $fatura->ft_valor, $nota_id, $fatura->ft_pagamento, 1);
                     }
 
                     // Itens de nota fiscal
                     foreach ($all_items as $item_un) 
                     {
                         $item = unserialize($item_un);
-                        exec_inf_stored_procedure($db, 1, 0, $item->unidade, $item->quantidade, $item->desconto, $item->cod, $item->descricao, $item->valorunitario);
+                        exec_inf_stored_procedure($db, $nota_id, $item->unidade, $item->quantidade, $item->desconto, $item->cod, $item->descricao, $item->valorunitario);
                     }
 
                     #while($result = $sth->fetch(PDO::FETCH_ASSOC)) {
@@ -381,9 +387,10 @@
                     $sth->nextRowset();
                 }
 
-                function exec_inf_stored_procedure($db, $numnota, $valortotal, $unidademedida, $quantidade, $desconto, $codigo, $descricao, $valorunitario)
+                function exec_inf_stored_procedure($db, $numnota, $unidademedida, $quantidade, $desconto, $codigo, $descricao, $valorunitario)
                 {
                     $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_itemnotafiscal ?, ?, ?, ?, ?, ?, ?, ?;");
+                    $valortotal = 0;
                     $sth->bindParam(1, $numnota);
                     $sth->bindParam(2, $valortotal);
                     $sth->bindParam(3, $unidademedida);
