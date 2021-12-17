@@ -43,7 +43,7 @@ class Form
 
         foreach ($all_pessoas as $pessoa)
         {
-            $output .= "<option value='" . $pessoa['nome'] . "'>" . $pessoa['nome'] . "</option>";
+            $output .= "<option value='" . $pessoa['codpessoa'] . "'>" . $pessoa['nome'] . "</option>";
         }
 
         $output .= "</select>" .
@@ -160,6 +160,7 @@ class NotaFiscal
 
 class PessoaJuridica
 {
+    public $codpessoa;
     public $pj_nome;
     public $pj_nomefantasia;
     public $pj_cnpj;
@@ -168,8 +169,9 @@ class PessoaJuridica
     public $pj_bairro;
     public $pj_logradouro;
 
-    function __construct($pj_nome, $pj_nomefantasia, $pj_cnpj, $pj_estado, $pj_municipio, $pj_bairro, $pj_logradouro)
+    function __construct($codpessoa, $pj_nome, $pj_nomefantasia, $pj_cnpj, $pj_estado, $pj_municipio, $pj_bairro, $pj_logradouro)
     {
+        $this->codpessoa = $codpessoa;
         $this->pj_nome = $pj_nome;
         $this->pj_nomefantasia = $pj_nomefantasia;
         $this->pj_cnpj = $pj_cnpj;

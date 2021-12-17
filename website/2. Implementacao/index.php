@@ -32,7 +32,7 @@
                 Form::$current_step = 0;
                 #session_unset();
 
-                if(isset($_SESSION['enviado']) === 1)
+                if(isset($_SESSION['enviado']))
                 {
                     session_unset();
                 }
@@ -87,7 +87,7 @@
 
                     if($_POST['pessoa_associada'] === "novo-pj")
                         echo Form::form_pessoajuridica();
-                    else
+                    else if($_POST['pessoa_associada'] === "novo-pf")
                         echo Form::form_pessoafisica();
 
                     echo Form::form_endereco();
@@ -128,6 +128,7 @@
                     # Print nota fiscal
                     print_nf($nota, $pj);
 
+                    # Cadastrar dados no BD
                     $db = new Database();
 
                     /*  Pegar:
@@ -137,14 +138,17 @@
                     */
 
                     // Pessoa Juridica
-                    exec_pj_stored_procedure($db, $pj->pj_nome, $pj->pj_cnpj, $pj->pj_nomefantasia, $pj->pj_estado, $pj->pj_municipio, $pj->pj_bairro, $pj->pj_logradouro);
-                    $result = $db->getAllRowsFromQuery("SELECT IDENT_CURRENT('pessoa')");
-                    $pessoa_id = $result[0][''];
-                    echo "New record created successfully. Last inserted ID pessoa is: " . $pessoa_id . "<br>";
+                    if(isset($_SESSION['gravar_pj']))
+                    {
+                        exec_pj_stored_procedure($db, $pj->pj_nome, $pj->pj_cnpj, $pj->pj_nomefantasia, $pj->pj_estado, $pj->pj_municipio, $pj->pj_bairro, $pj->pj_logradouro);
+                        $result = $db->getAllRowsFromQuery("SELECT IDENT_CURRENT('pessoa')");
+                        $pessoa_id = $result[0][''];
+                        echo "New record created successfully. Last inserted ID pessoa is: " . $pessoa_id . "<br>";
+                    }
 
                     // Nota Fiscal
                     $nota->set_codpessoa(1);
-                    exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, $pessoa_id, $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
+                    exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, isset($pessoa_id) ? $pessoa_id : $pj->codpessoa, $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
                     $nota_id = $db->getLastID();
                     echo "New record created successfully. Last inserted ID numnota is: " . $nota_id;
 
@@ -212,15 +216,47 @@
                 {
                     if(!isset($_SESSION['pessoa_juridica']))
                     {
-                        $pj = new PessoaJuridica(
-                            $_POST['pj_nome'] ?? '',
-                            $_POST['pj_nomefantasia'] ?? '',
-                            $_POST['pj_cnpj'] ?? '',
-                            $_POST['ps_estado'] ?? '',
-                            $_POST['ps_municipio'] ?? '',
-                            $_POST['ps_bairro'] ?? '',
-                            $_POST['ps_logradouro'] ?? ''
-                        );
+                        # Criar PJ pelos dados do formulario
+                        if(isset($_POST['pj_nome']))
+                        {
+                            $pj = new PessoaJuridica(
+                                -1,
+                                $_POST['pj_nome'] ?? '',
+                                $_POST['pj_nomefantasia'] ?? '',
+                                $_POST['pj_cnpj'] ?? '',
+                                $_POST['ps_estado'] ?? '',
+                                $_POST['ps_municipio'] ?? '',
+                                $_POST['ps_bairro'] ?? '',
+                                $_POST['ps_logradouro'] ?? ''
+                            );
+                            $_SESSION['gravar_pj'] = 1;
+                        }
+                        else # Ou pegar no BD
+                        {
+                            $db = new Database();
+                            $sql = "SELECT p.codpessoa, p.nome, j.CNPJ, j.nomefantasia, e.estado, e.municipio, e.bairro, e.logradouro FROM pessoa p
+                                        INNER JOIN pessoa_juridica j
+                                            ON p.codpessoa = j.codpessoa
+                                            INNER JOIN enderecopessoa ep
+                                            ON ep.codpessoa = p.codpessoa
+                                            INNER JOIN endereco e
+                                            ON ep.codendereco = e.codendereco
+                                        WHERE p.codpessoa = " . $_POST['pessoa_associada'];
+                            $pessoa = $db->getRowFromQuery($sql);
+
+                            $pj = new PessoaJuridica(
+                                $pessoa['codpessoa'] ?? '',
+                                $pessoa['nome'] ?? '',
+                                $pessoa['nomefantasia'] ?? '',
+                                $pessoa['CNPJ'] ?? '',
+                                $pessoa['estado'] ?? '',
+                                $pessoa['municipio'] ?? '',
+                                $pessoa['bairro'] ?? '',
+                                $pessoa['logradouro'] ?? ''
+                            );
+
+                            print_r($pj);
+                        }
                         $_SESSION['pessoa_juridica'] = serialize($pj);
                     }
                 }

@@ -93,10 +93,10 @@ class Database
         {
             $stmt = $this->conn->query($command); // Returns an object from class PDOStatement
 
-            if($this->validateQuery($stmt) === false)
-            {
-                throw new DatabaseQueryException("Credenciais incorretas.");
-            }
+            #if($this->validateQuery($stmt) === false)
+            #{
+                #throw new DatabaseQueryException("Credenciais incorretas.");
+            #}
         }
         catch(PDOException $e)
         {
