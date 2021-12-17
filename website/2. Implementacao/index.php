@@ -22,6 +22,9 @@
     <section class="sec-panel sec-form">
         <h2>Cadastrar Nota Fiscal</h2>
         <hr>
+
+        <a href="cadastrar_pessoa.php">Cadastrar Pessoa</a>
+        <a href="#">Cadastrar Cartão</a>
         
         <form name="formulario" action="index.php" method="POST">
             <?php

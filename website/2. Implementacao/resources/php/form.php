@@ -27,9 +27,13 @@ class Form
 	public static function form_notafiscal()
 	{
         $db = new Database();
-        $all_pessoas = $db->getAllRowsFromQuery("SELECT * FROM pessoa");
+        $all_pessoas = $db->getAllRowsFromQuery("SELECT p.codpessoa, p.nome, j.nomefantasia
+                                                FROM pessoa p FULL JOIN pessoa_juridica j
+                                                    ON p.codpessoa = j.codpessoa
+                                                    FULL JOIN pessoa_fisica f
+                                                    ON p.codpessoa = f.codpessoa");
         $db->close();
-
+        
 		$output =  "
 			<h3>Nota Fiscal</h3>
             <p class='form-input'>Data (*)</p>
@@ -43,7 +47,8 @@ class Form
 
         foreach ($all_pessoas as $pessoa)
         {
-            $output .= "<option value='" . $pessoa['codpessoa'] . "'>" . $pessoa['nome'] . "</option>";
+            $nome = empty($pessoa['nomefantasia']) === false ? $pessoa['nomefantasia'] : $pessoa['nome'];
+            $output .= "<option value='" . $pessoa['codpessoa'] . "'>" . $nome . "</option>";
         }
 
         $output .= "</select>" .
@@ -179,6 +184,32 @@ class PessoaJuridica
         $this->pj_municipio = $pj_municipio;
         $this->pj_bairro = $pj_bairro;
         $this->pj_logradouro = $pj_logradouro;
+    }
+}
+
+class PessoaFisica
+{
+    public $codpessoa;
+    public $nome;
+    public $cpf;
+    public $email;
+    public $telefone;
+    public $estado;
+    public $municipio;
+    public $bairro;
+    public $logradouro;
+
+    function __construct($codpessoa, $nome, $cpf, $email, $telefone, $estado, $municipio, $bairro, $logradouro)
+    {
+        $this->codpessoa = $codpessoa;
+        $this->nome = $nome;
+        $this->cpf = $cpf;
+        $this->email = $email;
+        $this->telefone = $telefone;
+        $this->estado = $estado;
+        $this->municipio = $municipio;
+        $this->bairro = $bairro;
+        $this->logradouro = $logradouro;
     }
 }
 
