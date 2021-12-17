@@ -22,9 +22,6 @@
     <section class="sec-panel sec-form">
         <h2>Cadastrar Nota Fiscal</h2>
         <hr>
-
-        <a href="cadastrar_pessoa.php">Cadastrar Pessoa</a>
-        <a href="#">Cadastrar Cartão</a>
         
         <form name="formulario" action="index.php" method="POST">
             <?php
@@ -81,6 +78,8 @@
 
                 /* SESSOES */
                 $form->registrar_sessao(0, (function() {
+                    echo "<a href='cadastrar_pessoa.php'>Cadastrar Pessoa</a>
+                            <a href='#'>Cadastrar Cartão</a>";
                     echo Form::form_notafiscal();
                 }));
 
