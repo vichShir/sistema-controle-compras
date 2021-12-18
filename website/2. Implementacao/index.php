@@ -149,7 +149,14 @@
                     }
 
                     // Nota Fiscal
-                    $nota->set_codpessoa(1);
+                    if($nota->nf_msmendereco === 'sim')
+                    {
+                        $nota->nf_estado = $pj->pj_estado;
+                        $nota->nf_municipio = $pj->pj_municipio;
+                        $nota->nf_bairro = $pj->pj_bairro;
+                        $nota->nf_logradouro = $pj->pj_logradouro;
+                    }
+
                     exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, isset($pessoa_id) ? $pessoa_id : $pj->codpessoa, $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
                     $nota_id = $db->getLastID();
                     echo "New record created successfully. Last inserted ID numnota is: " . $nota_id;
@@ -208,7 +215,8 @@
                             $_POST['nf_estado'] ?? '',
                             $_POST['nf_municipio'] ?? '',
                             $_POST['nf_bairro'] ?? '',
-                            $_POST['nf_logradouro'] ?? ''
+                            $_POST['nf_logradouro'] ?? '',
+                            $_POST['msmendereco'] ?? ''
                         );
                         $_SESSION['nota_fiscal'] = serialize($nota);
                     }
