@@ -119,12 +119,13 @@ class Form
         return "
             <h3>Fatura</h3>
             <p class='form-input'>Forma de Pagamento (*)</p>
-            <select name='ft_pagamento' required>
+            <select id='ft_pagamento' name='ft_pagamento' required>
               <option value='DB'>DÉBITO</option>
               <option value='CR'>CRÉDITO</option>
               <option value='VS'>À VISTA</option>
               <option value='PX'>PIX</option>
             </select>
+            <div id='ft-cartao'></div>
             <p class='form-input'>Data de Vencimento (*)</p>
             <input type='date' name='ft_dtvencimento' required>
             <p class='form-input'>Data de Pagamento</p>
@@ -271,13 +272,15 @@ class Fatura
     public $ft_dtvencimento;
     public $ft_dtpagamento;
     public $ft_valor;
+    public $ft_cartao;
 
-    function __construct($ft_pagamento, $ft_dtvencimento, $ft_dtpagamento, $ft_valor)
+    function __construct($ft_pagamento, $ft_dtvencimento, $ft_dtpagamento, $ft_valor, $ft_cartao)
     {
         $this->ft_pagamento = $ft_pagamento;
         $this->ft_dtvencimento = $ft_dtvencimento;
         $this->ft_dtpagamento = $ft_dtpagamento;
         $this->ft_valor = $ft_valor;
+        $this->ft_cartao = $ft_cartao;
     }
 }
 

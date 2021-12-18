@@ -165,7 +165,15 @@
                     foreach ($all_faturas as $fatura_un) 
                     {
                         $fatura = unserialize($fatura_un);
-                        exec_ft_stored_procedure($db, $fatura->ft_dtvencimento, $fatura->ft_dtpagamento, $fatura->ft_valor, $nota_id, $fatura->ft_pagamento, 1);
+
+                        if($fatura->ft_pagamento === 'DB' || $fatura->ft_pagamento === 'CR')
+                        {
+                            exec_ft_stored_procedure($db, $fatura->ft_dtvencimento, $fatura->ft_dtpagamento, $fatura->ft_valor, $nota_id, $fatura->ft_pagamento, $fatura->ft_cartao);
+                        }
+                        else
+                        {
+                            exec_ft_stored_procedure($db, $fatura->ft_dtvencimento, $fatura->ft_dtpagamento, $fatura->ft_valor, $nota_id, $fatura->ft_pagamento, NULL);
+                        }
                     }
 
                     // Itens de nota fiscal
@@ -174,10 +182,6 @@
                         $item = unserialize($item_un);
                         exec_inf_stored_procedure($db, $nota_id, $item->unidade, $item->quantidade, $item->desconto, $item->cod, $item->descricao, $item->valorunitario);
                     }
-
-                    #while($result = $sth->fetch(PDO::FETCH_ASSOC)) {
-                    #    var_dump($result);
-                    #}
 
                     $db->close();
 
@@ -264,8 +268,6 @@
                                 $pessoa['bairro'] ?? '',
                                 $pessoa['logradouro'] ?? ''
                             );
-
-                            print_r($pj);
                         }
                         $_SESSION['pessoa_juridica'] = serialize($pj);
                     }
@@ -296,7 +298,8 @@
                         $_POST['ft_pagamento'] ?? '',
                         $_POST['ft_dtvencimento'] ?? '',
                         $_POST['ft_dtpagamento'] ?? '',
-                        $_POST['ft_valor'] ?? ''
+                        $_POST['ft_valor'] ?? '',
+                        $_POST['ft_cartao'] ?? ''
                     );
 
                     if(isset($_POST['ft_pagamento']))
@@ -450,35 +453,6 @@
                 }
             ?>
 
-            <!--h3>pj_nome</h3>
-            <p>CNPJ: pj_cnpj</p>
-            <p>pj_logradouro, pj_bairro, pj_municipio, pj_estado</p>
-
-            <table class="table table-dark table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Código</th>
-                        <th scope="col">Descrição</th>
-                        <th scope="col">Quantidade</th>
-                        <th scope="col">Unidade</th>
-                        <th scope="col">Valor Unitário</th>
-                        <th scope="col">Valor Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>cod</td>
-                        <td>descricao</td>
-                        <td>quantidade</td>
-                        <td>unidade</td>
-                        <td>valorunitario</td>
-                        <td>quantidade * valorunitario</td>
-                    </tr>
-                </tbody>
-            </table-->
-
             <script>
                 $(document).ready(function() {
                     $("#radio-endereco-nao").on('change', function () { 
@@ -497,7 +471,68 @@
                     $("#radio-endereco-sim").on('change', function () { 
                         $('.form-endereco').remove();  
                     });
+
+                    $('#ft_pagamento').on('change', function() {
+                        if(this.value === 'DB' || this.value === 'CR')
+                        {
+                            enviarDados('enviar');
+                        }
+                        else
+                        {
+                            $('.form-cartao').remove();
+                        }
+                    });
                 });
+
+                let xhttp;
+                function enviarDados(cartao)
+                {
+                    xhttp = new XMLHttpRequest();
+                    
+                    if (!xhttp) 
+                    {
+                        alert('Não foi possível criar um objeto XMLHttpRequest.');
+                        return false;
+                    }
+                    xhttp.onreadystatechange = mostraResposta;
+                    xhttp.open('POST', 'resources/php/retrieve_cartao.php', true);
+                    xhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhttp.send('cartao=' + encodeURIComponent(cartao));
+                }
+
+                function mostraResposta() 
+                {
+                    try
+                    {
+                        if (xhttp.readyState === XMLHttpRequest.DONE)
+                        {
+                            if (xhttp.status === 200)
+                            {
+                                let resposta = JSON.parse(xhttp.responseText);
+
+                                let options = "<div class='form-cartao'><p class='form-input'>Associar Cartão (*)</p>\
+                                    <select name='ft_cartao' required>";
+
+                                var size = Object.keys(resposta['cartoes']).length;
+                                for(var i = 0; i < size; i++)
+                                {
+                                    options += "<option value='" + resposta['cartoes'][i]['codcartao'] + "'>" + (resposta['cartoes'][i]['final'] + " | " + resposta['cartoes'][i]['bandeira']) + "</option>";
+                                }
+
+                                $('.form-cartao').remove(); 
+                                $('#ft-cartao').append(options + "</select></div>");
+                            }
+                            else
+                            {
+                                alert('Um problema ocorreu.');
+                            }
+                        }
+                    } 
+                    catch (e)
+                    {
+                        alert("Ocorreu uma exceção: " + e.description);
+                    }
+                }
             </script>
 
             <p><input id='form-button' type='submit' value=<?php echo isset($_SESSION['submeter']) ? 'Enviar' : 'Próximo' ?>></p>
