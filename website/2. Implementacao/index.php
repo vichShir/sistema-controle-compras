@@ -79,7 +79,7 @@
                 /* SESSOES */
                 $form->registrar_sessao(0, (function() {
                     echo "<a href='cadastrar_pessoa.php'>Cadastrar Pessoa</a>
-                            <a href='#'>Cadastrar Cartão</a>";
+                            <a href='cadastrar_cartao.php'>Cadastrar Cartão</a>";
                     echo Form::form_notafiscal();
                 }));
 

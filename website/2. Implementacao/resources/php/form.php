@@ -135,6 +135,36 @@ class Form
             <div class='radio-option'><input type='radio' class='radio-input' name='maisfaturas' onclick='' value='sim' required><p>Sim</p></div>
             <div class='radio-option'><input type='radio' class='radio-input' name='maisfaturas' onclick='' value='nao'><p>Não</p></div>";
     }
+
+    public static function show_cartao()
+    {
+        return "
+            <h3>Cartão</h3>
+            <p class='form-input'>Últimos 4 dígitos do cartão (*)</p>
+            <input type='text' name='ct_digitos' placeholder='1234' size='4' minlength='4' maxlength='4' required>
+            <p class='form-input'>Bandeira (*)</p>
+            <input type='text' name='ct_bandeira' placeholder='Visa Electron' size='16' maxlength='16' required>
+            <p class='form-input'>Banco emissor do cartão (*)</p>
+            <input type='text' name='ct_banco' placeholder='Bradesco' size='30' maxlength='30' required>
+            <p class='form-input'>Data de Validade (*)</p>
+            <input type='date' name='ct_dtvalidade' required>";
+    }
+}
+
+class Cartao
+{
+    public $lastdigits;
+    public $bandeira;
+    public $bancoemissor;
+    public $dtvalidade;
+
+    function __construct($lastdigits, $bandeira, $bancoemissor, $dtvalidade)
+    {
+        $this->lastdigits = $lastdigits;
+        $this->bandeira = $bandeira;
+        $this->bancoemissor = $bancoemissor;
+        $this->dtvalidade = $dtvalidade;
+    }
 }
 
 class NotaFiscal
