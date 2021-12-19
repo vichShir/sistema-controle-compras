@@ -34,9 +34,9 @@ Estas são apenas algumas indagações iniciais que podemos realizar para o noss
 
 ### 🔨 Projeto
 
-**1. Como armazenar os dados?**
+#### **1. Como armazenar os dados?**
 
-A princípio, os dados coletados serão armazenados em um esquema de **banco de dados relacional**.
+A princípio, os dados coletados serão armazenados em um esquema de **banco de dados relacional** utilizando MS SQL Server.
 
 **✔️ Vantagens:**
 
@@ -49,9 +49,31 @@ A princípio, os dados coletados serão armazenados em um esquema de **banco de 
 * Limitação para um grande número de registros a longo prazo
 * Necessidade de seguir a estrutura do projeto
 
+#### **2. Como inserir os dados manualmente?**
+
+A **inserção manual** dos dados de **nota fiscal** serão coletados a partir de uma **interface web com formulários**. Para tanto, é necessário seguir a seguinte **ordem de inserção** estruturado no _Projeto SQL_:
+
+**🎲 Ordem de inserção dos dados**:
+
+1. **Pessoa (Jurídica ou Física)** associada à nota.
+2. **Nota Fiscal**.
+3. **Cartão** associado à fatura.
+4. **Faturas** associadas à nota.
+5. **Itens de Nota Fiscal** associados à nota.
+
+**📝 Formulários**:
+
+* Cadastro de **Pessoa (Jurídica ou Física).**
+* Cadastro de **Cartão**.
+* Cadastro de **Nota Fiscal**:
+  * Associar **Endereço** à nota.
+  * Associar **Pessoa** à nota.
+  * Associar **Itens de Nota Fiscal** à nota.
+  * Associar **Faturas** à nota.
+
 ### ⚙ Configurando Projeto
 
-**[1. MS SQL Sever no Docker](https://docs.microsoft.com/pt-br/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&pivots=cs1-bash)**
+**[1. MS SQL Server no Docker](https://docs.microsoft.com/pt-br/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&pivots=cs1-bash)**
 
 Execute os seguintes comandos **(PowerShell)**:
 
@@ -102,3 +124,20 @@ Conectar-se de fora do contêiner:
 sqlcmd -S localhost,1433 -U SA -P "<YourStrong@Passw0rd>"
 ```
 
+### 📖 Referências
+
+* [Length of a JavaScript object - Stack Overflow](https://stackoverflow.com/questions/5223/length-of-a-javascript-object)
+* [jQuery get value of select onChange - Stack Overflow](https://stackoverflow.com/questions/11179406/jquery-get-value-of-select-onchange)
+* [Joins (SQL Server) - SQL Server | Microsoft Docs](https://docs.microsoft.com/pt-br/sql/relational-databases/performance/joins?view=sql-server-ver15)
+* [PDOStatement::rowCount - PHP drivers for SQL Server | Microsoft Docs](https://docs.microsoft.com/pt-br/sql/connect/php/pdostatement-rowcount?view=sql-server-ver15)
+* [php - PDO - Qual é melhor: columnCount ou rowCount? - Stack Overflow em Português](https://pt.stackoverflow.com/questions/256668/pdo-qual-é-melhor-columncount-ou-rowcount)
+* [PHP: PDOStatement::rowCount - Manual](https://www.php.net/manual/pt_BR/pdostatement.rowcount.php)
+* [SQL SERVER - @@IDENTITY vs SCOPE_IDENTITY() vs IDENT_CURRENT - Retrieve Last Inserted Identity of Record - SQL Authority with Pinal Dave](https://blog.sqlauthority.com/2007/03/25/sql-server-identity-vs-scope_identity-vs-ident_current-retrieve-last-inserted-identity-of-record/)
+* [PHP: PDOStatement::nextRowset - Manual](https://www.php.net/manual/pt_BR/pdostatement.nextrowset.php)
+* [PHP: PDO::lastInsertId - Manual](https://www.php.net/manual/pt_BR/pdo.lastinsertid.php)
+* [PHP MySQL Get Last Inserted ID](https://www.w3schools.com/php/php_mysql_insert_lastid.asp)
+* [PHP: round - Manual](https://www.php.net/manual/pt_BR/function.round.php)
+* [PHP round() Function](https://www.w3schools.com/php/func_math_round.asp)
+* [PDOStatement::bindParam - PHP drivers for SQL Server | Microsoft Docs](https://docs.microsoft.com/pt-br/sql/connect/php/pdostatement-bindparam?view=sql-server-ver15)
+* [PHP: DateTime::format - Manual](https://www.php.net/manual/pt_BR/datetime.format.php)
+* [PHP Sessions](https://www.w3schools.com/php/php_sessions.asp)
