@@ -142,7 +142,7 @@
                     // Pessoa Juridica
                     if(isset($_SESSION['gravar_pj']))
                     {
-                        exec_pj_stored_procedure($db, $pj->pj_nome, $pj->pj_cnpj, $pj->pj_nomefantasia, $pj->pj_estado, $pj->pj_municipio, $pj->pj_bairro, $pj->pj_logradouro);
+                        exec_pj_stored_procedure($db, $pj);
                         $result = $db->getAllRowsFromQuery("SELECT IDENT_CURRENT('pessoa')");
                         $pessoa_id = $result[0][''];
                         echo "New record created successfully. Last inserted ID pessoa is: " . $pessoa_id . "<br>";
@@ -151,10 +151,10 @@
                     // Nota Fiscal
                     if($nota->msmendereco === 'sim')
                     {
-                        $nota->endereco->setEstado($pj->pj_estado);
-                        $nota->endereco->setMunicipio($pj->pj_municipio);
-                        $nota->endereco->setBairro($pj->pj_bairro);
-                        $nota->endereco->setLogradouro($pj->pj_logradouro);
+                        $nota->endereco->setEstado($pj->endereco->getEstado());
+                        $nota->endereco->setMunicipio($pj->endereco->getMunicipio());
+                        $nota->endereco->setBairro($pj->endereco->getBairro());
+                        $nota->endereco->setLogradouro($pj->endereco->getLogradouro());
                     }
 
                     $nota->set_codpessoa(isset($pessoa_id) ? $pessoa_id : $pj->codpessoa);
@@ -313,9 +313,9 @@
 
                 function print_nf($nota, $pj)
                 {
-                    echo "<h3>" . $pj->pj_nome . "</h3>
-                    <p>CNPJ: " . $pj->pj_cnpj . "</p>
-                    <p>" . $pj->pj_logradouro . ", " . $pj->pj_bairro . ", " . $pj->pj_municipio . ", " . $pj->pj_estado . "</p>
+                    echo "<h3>" . $pj->nome . "</h3>
+                    <p>CNPJ: " . $pj->cnpj . "</p>
+                    <p>" . $pj->endereco->getLogradouro() . ", " . $pj->endereco->getBairro() . ", " . $pj->endereco->getMunicipio() . ", " . $pj->endereco->getEstado() . "</p>
                     <p>" . $nota->data . "</p>
                     <table class='table table-dark table-striped table-hover'>
                         <thead>
@@ -390,16 +390,22 @@
                     </table>";
                 }
 
-                function exec_pj_stored_procedure($db, $pj_nome, $pj_cnpj, $pj_nomefantasia, $pj_estado, $pj_municipio, $pj_bairro, $pj_logradouro)
+                function exec_pj_stored_procedure($db, $pj)
                 {
+                    $endereco_pj = $pj->endereco;
+                    $estado = $endereco_pj->getEstado();
+                    $municipio = $endereco_pj->getMunicipio();
+                    $bairro = $endereco_pj->getBairro();
+                    $logradouro = $endereco_pj->getLogradouro();
+
                     $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_juridica ?, ?, ?, ?, ?, ?, ?;");
-                    $sth->bindParam(1, $pj_nome);
-                    $sth->bindParam(2, $pj_cnpj);
-                    $sth->bindParam(3, $pj_nomefantasia);
-                    $sth->bindParam(4, $pj_estado);
-                    $sth->bindParam(5, $pj_municipio);
-                    $sth->bindParam(6, $pj_bairro);
-                    $sth->bindParam(7, $pj_logradouro);
+                    $sth->bindParam(1, $pj->nome);
+                    $sth->bindParam(2, $pj->cnpj);
+                    $sth->bindParam(3, $pj->nomefantasia);
+                    $sth->bindParam(4, $estado);
+                    $sth->bindParam(5, $municipio);
+                    $sth->bindParam(6, $bairro);
+                    $sth->bindParam(7, $logradouro);
                     $sth->execute();
                     $sth->nextRowset();
                 }

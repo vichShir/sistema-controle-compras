@@ -198,24 +198,23 @@ class NotaFiscal
 class PessoaJuridica
 {
     public $codpessoa;
-    public $pj_nome;
-    public $pj_nomefantasia;
-    public $pj_cnpj;
-    public $pj_estado;
-    public $pj_municipio;
-    public $pj_bairro;
-    public $pj_logradouro;
+    public $nome;
+    public $nomefantasia;
+    public $cnpj;
+    public $endereco;
 
-    function __construct($codpessoa, $pj_nome, $pj_nomefantasia, $pj_cnpj, $pj_estado, $pj_municipio, $pj_bairro, $pj_logradouro)
+    function __construct($codpessoa, $nome, $nomefantasia, $cnpj, $estado, $municipio, $bairro, $logradouro)
     {
         $this->codpessoa = $codpessoa;
-        $this->pj_nome = $pj_nome;
-        $this->pj_nomefantasia = $pj_nomefantasia;
-        $this->pj_cnpj = $pj_cnpj;
-        $this->pj_estado = $pj_estado;
-        $this->pj_municipio = $pj_municipio;
-        $this->pj_bairro = $pj_bairro;
-        $this->pj_logradouro = $pj_logradouro;
+        $this->nome = $nome;
+        $this->nomefantasia = $nomefantasia;
+        $this->cnpj = $cnpj;
+        $this->setEndereco($estado, $municipio, $bairro, $logradouro);
+    }
+
+    private function setEndereco($estado, $municipio, $bairro, $logradouro)
+    {
+        $this->endereco = new Endereco($estado, $municipio, $bairro, $logradouro);
     }
 }
 
