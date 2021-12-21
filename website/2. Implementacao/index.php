@@ -410,6 +410,27 @@
                     $sth->nextRowset();
                 }
 
+                function exec_pf_stored_procedure($db, $pf)
+                {
+                    $endereco_pf = $pf->endereco;
+                    $estado = $endereco_pf->getEstado();
+                    $municipio = $endereco_pf->getMunicipio();
+                    $bairro = $endereco_pf->getBairro();
+                    $logradouro = $endereco_pf->getLogradouro();
+
+                    $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_fisica ?, ?, ?, ?, ?, ?, ?, ?;");
+                    $sth->bindParam(1, $pf->nome);
+                    $sth->bindParam(2, $pf->cpf);
+                    $sth->bindParam(3, $pf->email);
+                    $sth->bindParam(4, $pf->telefone);
+                    $sth->bindParam(5, $estado);
+                    $sth->bindParam(6, $municipio);
+                    $sth->bindParam(7, $bairro);
+                    $sth->bindParam(8, $logradouro);
+                    $sth->execute();
+                    $sth->nextRowset();
+                }
+
                 function exec_nf_stored_procedure($db, $nota_fiscal)
                 {
                     $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_notafiscal ?, ?, ?, ?, ?, ?, ?, ?;");

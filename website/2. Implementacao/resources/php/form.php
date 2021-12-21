@@ -225,10 +225,7 @@ class PessoaFisica
     public $cpf;
     public $email;
     public $telefone;
-    public $estado;
-    public $municipio;
-    public $bairro;
-    public $logradouro;
+    public $endereco
 
     function __construct($codpessoa, $nome, $cpf, $email, $telefone, $estado, $municipio, $bairro, $logradouro)
     {
@@ -237,10 +234,12 @@ class PessoaFisica
         $this->cpf = $cpf;
         $this->email = $email;
         $this->telefone = $telefone;
-        $this->estado = $estado;
-        $this->municipio = $municipio;
-        $this->bairro = $bairro;
-        $this->logradouro = $logradouro;
+        $this->setEndereco($estado, $municipio, $bairro, $logradouro);
+    }
+
+    private function setEndereco($estado, $municipio, $bairro, $logradouro)
+    {
+        $this->endereco = new Endereco($estado, $municipio, $bairro, $logradouro);
     }
 }
 
