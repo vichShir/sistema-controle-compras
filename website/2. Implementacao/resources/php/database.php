@@ -54,7 +54,7 @@ class Database
     {
         try
         {
-            $url = "mysql:host=" . self::HOSTNAME . ";port=" . self::PORT . ";dbname=" . self::DATABASE;
+            $url = "sqlsrv:Server=" . self::HOSTNAME . "," . self::PORT . ";Database=" . self::DATABASE;
 
             if(self::USING_SSL)
             {
@@ -65,8 +65,7 @@ class Database
                 );
             }
 
-            #$this->conn = new PDO($url, self::USERNAME, self::PASSWORD, $this->options);
-            $this->conn = new PDO("sqlsrv:Server=localhost,1433;Database=scc", "SA", "x9GCjKmGkV4EMLs");
+            $this->conn = new PDO($url, self::USERNAME, self::PASSWORD, $this->options);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }
         catch(PDOException $e)

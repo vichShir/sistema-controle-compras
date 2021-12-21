@@ -10,10 +10,10 @@
  * USING_SSL_CONNECTION = false -> desabilitar conexão SSL
  */
 define("DB_SERVER", "localhost");
-define("DB_USERNAME", "root");
-define("DB_PASSWORD", "");
+define("DB_USERNAME", "SA");
+define("DB_PASSWORD", "x9GCjKmGkV4EMLs");
 define("USING_SSL_CONNECTION", false);
-define("DB_PORT", "3306");
+define("DB_PORT", "1433");
 define("DB_DATABASE", "scc");
 
 if(USING_SSL_CONNECTION)
