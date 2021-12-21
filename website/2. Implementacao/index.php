@@ -149,15 +149,16 @@
                     }
 
                     // Nota Fiscal
-                    if($nota->nf_msmendereco === 'sim')
+                    if($nota->msmendereco === 'sim')
                     {
-                        $nota->nf_estado = $pj->pj_estado;
-                        $nota->nf_municipio = $pj->pj_municipio;
-                        $nota->nf_bairro = $pj->pj_bairro;
-                        $nota->nf_logradouro = $pj->pj_logradouro;
+                        $nota->endereco->setEstado($pj->pj_estado);
+                        $nota->endereco->setMunicipio($pj->pj_municipio);
+                        $nota->endereco->setBairro($pj->pj_bairro);
+                        $nota->endereco->setLogradouro($pj->pj_logradouro);
                     }
 
-                    exec_nf_stored_procedure($db, $nota->nf_data, $nota->nf_desconto, isset($pessoa_id) ? $pessoa_id : $pj->codpessoa, $nota->nf_estado, $nota->nf_municipio, $nota->nf_bairro, $nota->nf_logradouro);
+                    $nota->set_codpessoa(isset($pessoa_id) ? $pessoa_id : $pj->codpessoa);
+                    exec_nf_stored_procedure($db, $nota);
                     $nota_id = $db->getLastID();
                     echo "New record created successfully. Last inserted ID numnota is: " . $nota_id;
 
@@ -315,7 +316,7 @@
                     echo "<h3>" . $pj->pj_nome . "</h3>
                     <p>CNPJ: " . $pj->pj_cnpj . "</p>
                     <p>" . $pj->pj_logradouro . ", " . $pj->pj_bairro . ", " . $pj->pj_municipio . ", " . $pj->pj_estado . "</p>
-                    <p>" . $nota->nf_data . "</p>
+                    <p>" . $nota->data . "</p>
                     <table class='table table-dark table-striped table-hover'>
                         <thead>
                             <tr>
@@ -403,22 +404,28 @@
                     $sth->nextRowset();
                 }
 
-                function exec_nf_stored_procedure($db, $nf_data, $nf_desconto, $codpessoa, $nf_estado, $nf_municipio, $nf_bairro, $nf_logradouro)
+                function exec_nf_stored_procedure($db, $nota_fiscal)
                 {
                     $sth = $db->conn->prepare("SET NOCOUNT ON; EXEC ins_notafiscal ?, ?, ?, ?, ?, ?, ?, ?;");
                     $valortotal = 0;
 
-                    $date = new DateTime($nf_data);
+                    $date = new DateTime($nota_fiscal->data);
                     $date = $date->format('Y-m-d H:i:s');
+
+                    $endereco_nota = $nota_fiscal->endereco;
+                    $estado = $endereco_nota->getEstado();
+                    $municipio = $endereco_nota->getMunicipio();
+                    $bairro = $endereco_nota->getBairro();
+                    $logradouro = $endereco_nota->getLogradouro();
 
                     $sth->bindParam(1, $valortotal);
                     $sth->bindParam(2, $date);
-                    $sth->bindParam(3, $nf_desconto);
-                    $sth->bindParam(4, $codpessoa);
-                    $sth->bindParam(5, $nf_estado);
-                    $sth->bindParam(6, $nf_municipio);
-                    $sth->bindParam(7, $nf_bairro);
-                    $sth->bindParam(8, $nf_logradouro);
+                    $sth->bindParam(3, $nota_fiscal->desconto);
+                    $sth->bindParam(4, $nota_fiscal->codpessoa);
+                    $sth->bindParam(5, $estado);
+                    $sth->bindParam(6, $municipio);
+                    $sth->bindParam(7, $bairro);
+                    $sth->bindParam(8, $logradouro);
                     $sth->execute();
                     $sth->nextRowset();
                 }

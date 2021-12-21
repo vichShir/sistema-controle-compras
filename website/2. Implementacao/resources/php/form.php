@@ -170,29 +170,28 @@ class Cartao
 
 class NotaFiscal
 {
-    public $nf_data;
-    public $nf_desconto;
-    public $nf_estado;
-    public $nf_municipio;
-    public $nf_bairro;
-    public $nf_logradouro;
-    public $nf_codpessoa;
-    public $nf_msmendereco;
+    public $data;
+    public $desconto;
+    public $endereco;
+    public $codpessoa;
+    public $msmendereco;
 
-    function __construct($nf_data, $nf_desconto, $nf_estado, $nf_municipio, $nf_bairro, $nf_logradouro, $nf_msmendereco)
+    function __construct($data, $desconto, $estado, $municipio, $bairro, $logradouro, $msmendereco)
     {
-        $this->nf_data = $nf_data;
-        $this->nf_desconto = $nf_desconto;
-        $this->nf_estado = $nf_estado;
-        $this->nf_municipio = $nf_municipio;
-        $this->nf_bairro = $nf_bairro;
-        $this->nf_logradouro = $nf_logradouro;
-        $this->nf_msmendereco = $nf_msmendereco;
+        $this->data = $data;
+        $this->desconto = $desconto;
+        $this->msmendereco = $msmendereco;
+        $this->setEndereco($estado, $municipio, $bairro, $logradouro);
     }
 
-    function set_codpessoa($codpessoa)
+    private function setEndereco($estado, $municipio, $bairro, $logradouro)
     {
-        $this->nf_codpessoa = $codpessoa;
+        $this->endereco = new Endereco($estado, $municipio, $bairro, $logradouro);
+    }
+
+    public function set_codpessoa($codpessoa)
+    {
+        $this->codpessoa = $codpessoa;
     }
 }
 
@@ -244,6 +243,32 @@ class PessoaFisica
         $this->bairro = $bairro;
         $this->logradouro = $logradouro;
     }
+}
+
+class Endereco
+{
+    private $estado;
+    private $municipio;
+    private $bairro;
+    private $logradouro;
+
+    function __construct($estado, $municipio, $bairro, $logradouro)
+    {
+        $this->estado = $estado;
+        $this->municipio = $municipio;
+        $this->bairro = $bairro;
+        $this->logradouro = $logradouro;
+    }
+
+    public function setEstado($estado) { $this->estado = $estado; }
+    public function setMunicipio($municipio) { $this->municipio = $municipio; }
+    public function setBairro($bairro) { $this->bairro = $bairro; }
+    public function setLogradouro($logradouro) { $this->logradouro = $logradouro; }
+
+    public function getEstado() { return $this->estado; }
+    public function getMunicipio() { return $this->municipio; }
+    public function getBairro() { return $this->bairro; }
+    public function getLogradouro() { return $this->logradouro; }
 }
 
 class ItemNotaFiscal
