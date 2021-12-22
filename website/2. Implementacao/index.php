@@ -138,13 +138,15 @@
                     numnota da nota atual
                     codcartao se for debito ou credito
                     */
+                    $codpessoa;
+                    $numnota;
 
                     // Pessoa Juridica
                     if(isset($_SESSION['gravar_pj']))
                     {
                         $db->store_pessoa_juridica($pj);
-                        $pessoa_id = $db->getLastIDFrom('pessoa');
-                        echo "New record created successfully. Last inserted ID pessoa is: " . $pessoa_id . "<br>";
+                        $codpessoa = $db->getLastIDFrom('pessoa');
+                        echo "New record created successfully. Last inserted ID pessoa is: " . $codpessoa . "<br>";
                     }
 
                     // Nota Fiscal
@@ -156,23 +158,23 @@
                         $nota->endereco->setLogradouro($pj->endereco->getLogradouro());
                     }
 
-                    $nota->set_codpessoa(isset($pessoa_id) ? $pessoa_id : $pj->codpessoa);
+                    $nota->set_codpessoa(isset($codpessoa) ? $codpessoa : $pj->codpessoa);
                     $db->store_nota_fiscal($nota);
-                    $nota_id = $db->getLastIDFrom('notafiscal');
-                    echo "New record created successfully. Last inserted ID numnota is: " . $nota_id;
+                    $numnota = $db->getLastIDFrom('notafiscal');
+                    echo "New record created successfully. Last inserted ID numnota is: " . $numnota;
 
                     // Fatura
                     foreach ($all_faturas as $fatura_un) 
                     {
                         $fatura = unserialize($fatura_un);
-                        $db->store_fatura($fatura, $nota_id);
+                        $db->store_fatura($fatura, $numnota);
                     }
 
                     // Itens de nota fiscal
                     foreach ($all_items as $item_un) 
                     {
                         $item = unserialize($item_un);
-                        $db->store_item_nota_fiscal($item, $nota_id);
+                        $db->store_item_nota_fiscal($item, $numnota);
                     }
 
                     $db->close();
@@ -399,6 +401,13 @@
 
                     $("#radio-endereco-sim").on('change', function () { 
                         $('.form-endereco').remove();  
+                    });
+
+                    $(document).ready(function () {
+                        if($("#ft_pagamento").val() === 'DB' || $("#ft_pagamento").val() === 'CR')
+                        {
+                            enviarDados('enviar');
+                        }
                     });
 
                     $('#ft_pagamento').on('change', function() {
