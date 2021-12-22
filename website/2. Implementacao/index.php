@@ -131,8 +131,7 @@
                     print_nf($nota, $pj);
 
                     # Cadastrar dados no BD
-                    $db = new Database();
-                    $sp = new StoredProcedure();
+                    $db = new StoredProcedure();
 
                     /*  Pegar:
                     codpessoa de pessoa juridica ou fisica
@@ -143,9 +142,8 @@
                     // Pessoa Juridica
                     if(isset($_SESSION['gravar_pj']))
                     {
-                        $sp->store_pessoa_juridica($pj);
-                        $result = $db->getAllRowsFromQuery("SELECT IDENT_CURRENT('pessoa')");
-                        $pessoa_id = $result[0][''];
+                        $db->store_pessoa_juridica($pj);
+                        $pessoa_id = $db->getLastIDFrom('pessoa');
                         echo "New record created successfully. Last inserted ID pessoa is: " . $pessoa_id . "<br>";
                     }
 
@@ -159,23 +157,22 @@
                     }
 
                     $nota->set_codpessoa(isset($pessoa_id) ? $pessoa_id : $pj->codpessoa);
-                    $sp->store_nota_fiscal($nota);
-                    $result = $db->getAllRowsFromQuery("SELECT IDENT_CURRENT('notafiscal')");
-                    $nota_id = $result[0][''];
+                    $db->store_nota_fiscal($nota);
+                    $nota_id = $db->getLastIDFrom('notafiscal');
                     echo "New record created successfully. Last inserted ID numnota is: " . $nota_id;
 
                     // Fatura
                     foreach ($all_faturas as $fatura_un) 
                     {
                         $fatura = unserialize($fatura_un);
-                        $sp->store_fatura($fatura, $nota_id);
+                        $db->store_fatura($fatura, $nota_id);
                     }
 
                     // Itens de nota fiscal
                     foreach ($all_items as $item_un) 
                     {
                         $item = unserialize($item_un);
-                        $sp->store_item_nota_fiscal($item, $nota_id);
+                        $db->store_item_nota_fiscal($item, $nota_id);
                     }
 
                     $db->close();

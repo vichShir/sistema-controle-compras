@@ -120,9 +120,10 @@ class Database
         return $this->retrieveAllRows($stmt);
     }
 
-    public function getLastID()
+    public function getLastIDFrom($table)
     {
-        return $this->conn->lastInsertId();
+        $result = $this->getAllRowsFromQuery("SELECT IDENT_CURRENT('$table') AS ID");
+        return $result[0]['ID'];
     }
 
     private function validateQuery($statement)
