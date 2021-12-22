@@ -85,11 +85,6 @@ class Form
             <input type='text' name='pj_cnpj' placeholder='00000000000000' pattern='[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{5}' size='14' maxlength='14' required>";
 	}
 
-    public static function form_pessoafisica()
-    {
-
-    }
-
     public static function show_itemnotafiscal()
     {
         return "
@@ -225,7 +220,7 @@ class PessoaFisica
     public $cpf;
     public $email;
     public $telefone;
-    public $endereco
+    public $endereco;
 
     function __construct($codpessoa, $nome, $cpf, $email, $telefone, $estado, $municipio, $bairro, $logradouro)
     {

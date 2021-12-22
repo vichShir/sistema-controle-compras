@@ -147,6 +147,122 @@ class Database
     }
 }
 
+class StoredProcedure extends Database
+{
+    public function store_pessoa_juridica($pj)
+    {
+        $endereco_pj = $pj->endereco;
+        $estado = $endereco_pj->getEstado();
+        $municipio = $endereco_pj->getMunicipio();
+        $bairro = $endereco_pj->getBairro();
+        $logradouro = $endereco_pj->getLogradouro();
+
+        $sth = $this->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_juridica ?, ?, ?, ?, ?, ?, ?;");
+        $sth->bindParam(1, $pj->nome);
+        $sth->bindParam(2, $pj->cnpj);
+        $sth->bindParam(3, $pj->nomefantasia);
+        $sth->bindParam(4, $estado);
+        $sth->bindParam(5, $municipio);
+        $sth->bindParam(6, $bairro);
+        $sth->bindParam(7, $logradouro);
+        $sth->execute();
+        $sth->nextRowset();
+    }
+
+    public function store_pessoa_fisica($pf)
+    {
+        $endereco_pf = $pf->endereco;
+        $estado = $endereco_pf->getEstado();
+        $municipio = $endereco_pf->getMunicipio();
+        $bairro = $endereco_pf->getBairro();
+        $logradouro = $endereco_pf->getLogradouro();
+
+        $sth = $this->conn->prepare("SET NOCOUNT ON; EXEC ins_pessoa_fisica ?, ?, ?, ?, ?, ?, ?, ?;");
+        $sth->bindParam(1, $pf->nome);
+        $sth->bindParam(2, $pf->cpf);
+        $sth->bindParam(3, $pf->email);
+        $sth->bindParam(4, $pf->telefone);
+        $sth->bindParam(5, $estado);
+        $sth->bindParam(6, $municipio);
+        $sth->bindParam(7, $bairro);
+        $sth->bindParam(8, $logradouro);
+        $sth->execute();
+        $sth->nextRowset();
+    }
+
+    public function store_nota_fiscal($nota_fiscal)
+    {
+        $sth = $this->conn->prepare("SET NOCOUNT ON; EXEC ins_notafiscal ?, ?, ?, ?, ?, ?, ?, ?;");
+        $valortotal = 0;
+
+        $date = new DateTime($nota_fiscal->data);
+        $date = $date->format('Y-m-d H:i:s');
+
+        $endereco_nota = $nota_fiscal->endereco;
+        $estado = $endereco_nota->getEstado();
+        $municipio = $endereco_nota->getMunicipio();
+        $bairro = $endereco_nota->getBairro();
+        $logradouro = $endereco_nota->getLogradouro();
+
+        $sth->bindParam(1, $valortotal);
+        $sth->bindParam(2, $date);
+        $sth->bindParam(3, $nota_fiscal->desconto);
+        $sth->bindParam(4, $nota_fiscal->codpessoa);
+        $sth->bindParam(5, $estado);
+        $sth->bindParam(6, $municipio);
+        $sth->bindParam(7, $bairro);
+        $sth->bindParam(8, $logradouro);
+        $sth->execute();
+        $sth->nextRowset();
+    }
+
+    public function store_fatura($fatura, $nota_id)
+    {
+        $sth = $this->conn->prepare("SET NOCOUNT ON; EXEC ins_fatura ?, ?, ?, ?, ?, ?;");
+
+        $dtvencimento = new DateTime($fatura->ft_dtvencimento);
+        $dtvencimento = $dtvencimento->format('Y-m-d H:i:s');
+
+        $dtpagamento = new DateTime($fatura->ft_dtpagamento);
+        $dtpagamento = $dtpagamento->format('Y-m-d H:i:s');
+
+        $var_type;
+        if($fatura->ft_cartao == '')
+        {
+            $var_type = PDO::PARAM_NULL;
+        }
+        else
+        {
+            $var_type = PDO::PARAM_INT;
+        }
+
+        $sth->bindParam(1, $dtvencimento);
+        $sth->bindParam(2, $dtpagamento);
+        $sth->bindParam(3, $fatura->ft_valor);
+        $sth->bindParam(4, $nota_id);
+        $sth->bindParam(5, $fatura->ft_pagamento);
+        $sth->bindParam(6, $fatura->ft_cartao, $var_type);
+        $sth->execute();
+        $sth->nextRowset();
+    }
+
+    public function store_item_nota_fiscal($item, $numnota)
+    {
+        $sth = $this->conn->prepare("SET NOCOUNT ON; EXEC ins_itemnotafiscal ?, ?, ?, ?, ?, ?, ?, ?;");
+        $valortotal = 0;
+        $sth->bindParam(1, $numnota);
+        $sth->bindParam(2, $valortotal);
+        $sth->bindParam(3, $item->unidade);
+        $sth->bindParam(4, $item->quantidade);
+        $sth->bindParam(5, $item->desconto);
+        $sth->bindParam(6, $item->cod);
+        $sth->bindParam(7, $item->descricao);
+        $sth->bindParam(8, $item->valorunitario);
+        $sth->execute();
+        $sth->nextRowset();
+    }
+}
+
 class DBCommands
 {
                                    
